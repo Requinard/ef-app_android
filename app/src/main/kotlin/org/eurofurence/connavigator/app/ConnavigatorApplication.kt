@@ -1,6 +1,7 @@
 package org.eurofurence.connavigator.app
 
 import android.support.multidex.MultiDexApplication
+import com.chibatching.kotpref.Kotpref
 import net.danlew.android.joda.JodaTimeAndroid
 import nl.komponents.kovenant.android.startKovenant
 import org.eurofurence.connavigator.database.UpdateIntentService
@@ -27,6 +28,7 @@ class ConnavigatorApplication : MultiDexApplication() {
         Analytics.init(this)
         startKovenant()
         PushListenerService().subscribe()
+        Kotpref.init(this)
         UpdateIntentService.dispatchUpdate(this)
     }
 }
