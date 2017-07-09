@@ -48,6 +48,12 @@
             </intent-filter>
         </activity>
 
+        <activity android:name=".ui.RouterActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.VIEW" />
+            </intent-filter>
+        </activity>
+
         <activity android:name=".ui.ActivitySettings"/>
 
         <activity android:name=".ui.LoginActivity" />
