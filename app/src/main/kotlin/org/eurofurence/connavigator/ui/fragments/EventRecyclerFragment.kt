@@ -321,10 +321,10 @@ class SingleEventUi : AnkoComponent<ViewGroup> {
 
 
                     tableRow {
-                        gravity = Gravity.CENTER_VERTICAL
                         textView {
                             id = R.id.eventStartTime
                             minMaxWidth = fw(15.percent())
+                            gravity = Gravity.CENTER_VERTICAL
                             compatAppearance = android.R.style.TextAppearance_Medium
                             singleLine = true
                         }
@@ -334,24 +334,24 @@ class SingleEventUi : AnkoComponent<ViewGroup> {
                             id = R.id.eventGlyph
                             minMaxWidth = fw(15.percent())
                             horizontalPadding = dip(5)
-                            gravity = Gravity.END
+                            gravity = Gravity.END or Gravity.CENTER_VERTICAL
                             compatAppearance = android.R.style.TextAppearance_Small
                             singleLine = true
                         }
 
                         textView {
                             id = R.id.eventTitle
+                            gravity = Gravity.CENTER_VERTICAL
                             compatAppearance = android.R.style.TextAppearance_Medium
                             singleLine = true
                         }
                     }
 
                     tableRow {
-                        gravity = Gravity.CENTER_VERTICAL
                         fontAwesomeView {
                             id = R.id.eventEndTime
                             minMaxWidth = fw(15.percent())
-                            gravity = Gravity.END
+                            gravity = Gravity.END or Gravity.CENTER_VERTICAL
                             compatAppearance = android.R.style.TextAppearance_Small
                             singleLine = true
                         }
@@ -361,13 +361,14 @@ class SingleEventUi : AnkoComponent<ViewGroup> {
                             id = R.id.eventGlyphOverflow
                             minMaxWidth = fw(15.percent())
                             horizontalPadding = dip(5)
-                            gravity = Gravity.END
+                            gravity = Gravity.END or Gravity.CENTER_VERTICAL
                             compatAppearance = android.R.style.TextAppearance_Small
                             singleLine = true
                         }
 
                         textView {
                             id = R.id.eventRoom
+                            gravity = Gravity.CENTER_VERTICAL
                             compatAppearance = android.R.style.TextAppearance_Small
                             singleLine = true
                         }
