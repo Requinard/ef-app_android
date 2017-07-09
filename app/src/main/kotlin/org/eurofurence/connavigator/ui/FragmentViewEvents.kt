@@ -27,7 +27,7 @@ import org.joda.time.format.DateTimeFormat
 class FragmentViewEvents : Fragment(), ContentAPI, HasDb {
     override val db by lazyLocateDb()
 
-    inner class EventFragmentPagerAdapter(val fragmentManager: FragmentManager) : FragmentStatePagerAdapter(fragmentManager) {
+    inner class EventFragmentPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
         override fun getPageTitle(position: Int): CharSequence? {
             if (AppPreferences.shortenDates) {
                 return DateTime(days.asc { it.date }[position].date).dayOfWeek().asShortText
@@ -79,7 +79,7 @@ class FragmentViewEvents : Fragment(), ContentAPI, HasDb {
     }
 
     private fun configureViewpager() {
-        eventPager.adapter = EventFragmentPagerAdapter(childFragmentManager)
+        eventPager.adapter = EventFragmentPagerAdapter()
         eventPager.offscreenPageLimit = 1
 
         eventPager.currentItem = db.eventDayNumber()

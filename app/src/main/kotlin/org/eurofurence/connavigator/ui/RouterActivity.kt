@@ -19,6 +19,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
     )
 
     val history = Stack<Pair<String, Fragment>>()
+    val parameterBinder = Regex("""[{]([^}]+)[}]""")
     var current: Pair<String, Fragment>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -43,6 +44,8 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
 
     fun push(route: String) {
         info { "Pushing route $route" }
+
+        // Finding
         val fragment = routes[route]
         if (fragment != null) {
             info { "Route is valid. Creating instance" }
@@ -50,9 +53,14 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
             // Since we are moving to a new element, we move current to the history
             history.push(current)
 
+            info { "History now contains ${history.size} items"}
+
             // then we re-assign current
             val instance = fragment.createInstance()
             current = Pair(route, instance)
+
+            // Now we check the URL for variables
+
 
             // And now we do transaction replacement
             info { "Starting fragment transaction" }
@@ -71,7 +79,10 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
         if(history.peek() != null){
             val lastHistory = history.pop()
 
+            info {"History now contains ${history.size} items"}
+
             supportFragmentManager.beginTransaction()
+                    .remove(current!!.second)
                     .replace(1, lastHistory.second)
                     .commit()
         } else {
