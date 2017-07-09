@@ -330,7 +330,7 @@ class SingleEventUi : AnkoComponent<ViewGroup> {
                         }
 
                         fontAwesomeView {
-
+                            lparams(matchParent, matchParent)
                             id = R.id.eventGlyph
                             minMaxWidth = fw(15.percent())
                             horizontalPadding = dip(5)
@@ -357,8 +357,9 @@ class SingleEventUi : AnkoComponent<ViewGroup> {
                         }
 
                         fontAwesomeView {
+                            lparams(matchParent, matchParent)
                             id = R.id.eventGlyphOverflow
-                            minMaxWidth = fw(15 .percent())
+                            minMaxWidth = fw(15.percent())
                             horizontalPadding = dip(5)
                             gravity = Gravity.END
                             compatAppearance = android.R.style.TextAppearance_Small
