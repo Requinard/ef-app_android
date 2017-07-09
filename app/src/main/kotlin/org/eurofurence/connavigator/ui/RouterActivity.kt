@@ -8,6 +8,51 @@ import java.util.*
 import kotlin.reflect.full.createInstance
 
 /**
+ * Regular expression making regular expressions.
+ */
+data class Regregexex(val value: String) {
+    companion object {
+        /**
+         * Higher order regex.
+         */
+        private val outer by lazy { Regex("""[{]([^}]+)[}]""") }
+    }
+
+    /**
+     * The compiled values, computed on use.
+     */
+    private val compiled by lazy {
+        val k = mutableListOf<String>()
+        val m = outer.replace(value) { it ->
+            k += it.groupValues[1]
+            """\E(.+)\Q"""
+        }
+        Regex("""^\Q$m\E$""") to k.toList()
+
+    }
+
+
+    /**
+     * All the keys defined in the value.
+     */
+    val keys: List<String>
+        get() = compiled.second
+
+    /**
+     * Matches a string and returns the assignments.
+     */
+    fun match(string: String) =
+            compiled.first
+                    .matchEntire(string)
+                    ?.groupValues
+                    ?.drop(1)
+                    ?.mapIndexed { i, x -> keys[i] to x }
+                    ?.associate { it }
+                    ?: emptyMap()
+}
+
+
+/**
  * Created by requinard on 7/9/17.
  */
 class RouterActivity : AppCompatActivity(), AnkoLogger {
@@ -31,7 +76,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
             button("Events") {
                 setOnClickListener { push("/event") }
             }
-            button("Info"){
+            button("Info") {
                 setOnClickListener { push("/info") }
             }
             id = 1
@@ -53,7 +98,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
             // Since we are moving to a new element, we move current to the history
             history.push(current)
 
-            info { "History now contains ${history.size} items"}
+            info { "History now contains ${history.size} items" }
 
             // then we re-assign current
             val instance = fragment.createInstance()
@@ -74,12 +119,12 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
     }
 
     override fun onBackPressed() {
-        info {"Navigating router back in history"}
+        info { "Navigating router back in history" }
 
-        if(history.peek() != null){
+        if (history.peek() != null) {
             val lastHistory = history.pop()
 
-            info {"History now contains ${history.size} items"}
+            info { "History now contains ${history.size} items" }
 
             supportFragmentManager.beginTransaction()
                     .remove(current!!.second)
