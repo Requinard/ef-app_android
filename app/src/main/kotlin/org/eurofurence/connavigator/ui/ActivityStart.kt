@@ -84,7 +84,7 @@ class ActivityStart : AppCompatActivity(), AnkoLogger, HasDb {
         info { "Writing current version to database" }
         db.version = BuildConfig.VERSION_NAME
         info { "Starting Root activity from Start activity" }
-        startActivity<ActivityRoot>()
+        startActivity<RouterActivity>()
     }
 
     private fun allowProceed() {
