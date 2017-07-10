@@ -166,11 +166,6 @@ class RouterUi : AnkoComponent<RouterActivity>, AnkoLogger {
                     lparams(matchParent, matchParent)
 
                     appBarLayout {
-                        val toggle = ActionBarDrawerToggle(
-                                ui.owner, this@drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
-                        )
-                        addDrawerListener(toggle)
-                        toggle.syncState()
 
                         lparams(matchParent, wrapContent)
 
@@ -178,6 +173,13 @@ class RouterUi : AnkoComponent<RouterActivity>, AnkoLogger {
                             lparams(matchParent, wrapContent)
                             title = "Eurofurence"
                         }
+
+                        val toggle = ActionBarDrawerToggle(
+                                ui.owner, this@drawerLayout, toolbar, R.string.navigation_drawer_open,
+                                R.string.navigation_drawer_close
+                        )
+                        addDrawerListener(toggle)
+                        toggle.syncState()
 
                         tabLayout {
                             lparams(matchParent, wrapContent)
