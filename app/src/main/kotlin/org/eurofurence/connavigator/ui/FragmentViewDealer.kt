@@ -25,17 +25,12 @@ import org.eurofurence.connavigator.util.extensions.*
 import org.eurofurence.connavigator.util.v2.get
 import org.jetbrains.anko.*
 import us.feras.mdv.MarkdownView
+import java.util.*
 
 /**
  * Created by David on 16-5-2016.
  */
-class FragmentViewDealer() : Fragment(), ContentAPI, HasDb, AnkoLogger {
-    constructor(dealer: DealerRecord) : this() {
-        arguments = Bundle()
-
-        arguments.jsonObjects["dealer"] = dealer
-    }
-
+class FragmentViewDealer : Fragment(), ContentAPI, HasDb, AnkoLogger {
     val ui by lazy { DealerUi() }
 
     override val db by lazyLocateDb()
@@ -47,8 +42,9 @@ class FragmentViewDealer() : Fragment(), ContentAPI, HasDb, AnkoLogger {
         // Send analytics pings
         Analytics.screen(activity, "View Dealer Details")
 
-        if ("dealer" in arguments) {
-            val dealer: DealerRecord = arguments.jsonObjects["dealer"]
+        if ("uid" in arguments) {
+            val uid = UUID.fromString(arguments.getString("uid"))
+            val dealer: DealerRecord = db.dealers[uid]!!
 
             Analytics.event(Analytics.Category.DEALER, Analytics.Action.OPENED, dealer.displayName ?: dealer.attendeeNickname)
 

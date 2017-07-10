@@ -92,6 +92,7 @@ class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
             Regregexex("/event") to FragmentViewEvents::class,
             Regregexex("/event/{uid}") to FragmentViewEvent::class,
             Regregexex("/dealer") to FragmentViewDealers::class,
+            Regregexex("/dealer/{uid}") to FragmentViewDealer::class,
             Regregexex("/maps") to FragmentViewMaps::class,
             Regregexex("/about") to FragmentViewAbout::class,
             Regregexex("/messages") to FragmentViewMessages::class
@@ -112,10 +113,18 @@ class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
 
         info { "Sending router to default activity" }
 
+        // Start at home
         push(Route("/"))
 
+        // Handle incoming intent
+        if(intent.action == Intent.ACTION_VIEW){
+            push(Route(intent.dataString))
+        }
+
+        // Listen for history updates
         update.listen { push(it) }
 
+        // Set up the navigation menu
         configureNavigation()
     }
 

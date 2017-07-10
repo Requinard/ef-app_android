@@ -11,14 +11,14 @@ import android.widget.LinearLayout
 import android.widget.TextView
 import io.swagger.client.model.DealerRecord
 import org.eurofurence.connavigator.R
+import org.eurofurence.connavigator.broadcast.Route
+import org.eurofurence.connavigator.broadcast.pushRoute
 import org.eurofurence.connavigator.database.Db
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.net.imageService
 import org.eurofurence.connavigator.ui.dialogs.DealerDialog
-import org.eurofurence.connavigator.util.Formatter
 import org.eurofurence.connavigator.util.TouchVibrator
 import org.eurofurence.connavigator.util.delegators.view
-import org.eurofurence.connavigator.util.extensions.applyOnRoot
 import org.eurofurence.connavigator.util.extensions.getName
 import org.eurofurence.connavigator.util.v2.get
 import org.jetbrains.anko.*
@@ -39,6 +39,8 @@ class DealerRecyclerAdapter(val effective_events: List<DealerRecord>, override v
         return effective_events.count()
     }
 
+    val history by lazy { pushRoute.bind(fragment.context) }
+
     override fun onBindViewHolder(holder: DealerDataHolder, position: Int) {
         val dealer = effective_events[position]
         val vibrator = TouchVibrator(fragment.context)
@@ -55,13 +57,11 @@ class DealerRecyclerAdapter(val effective_events: List<DealerRecord>, override v
         }
 
         holder.layout.setOnClickListener {
-            fragment.applyOnRoot { navigateToDealer(dealer) }
-            vibrator.long().let { true }
+            history.send(Route("/dealer/${dealer.id}")).let { true }
         }
 
         holder.layout.setOnLongClickListener {
-            DealerDialog(dealer).show(fragment.childFragmentManager, "Dealer menu")
-            vibrator.long().let { true }
+            DealerDialog(dealer).show(fragment.childFragmentManager, "Dealer menu").let { true }
         }
     }
 

@@ -32,25 +32,20 @@
         <activity android:name=".ui.ActivityRoot">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW"/>
-
-                <category android:name="android.intent.category.DEFAULT"/>
-                <category android:name="android.intent.category.BROWSABLE"/>
-
-                <data
-                        android:scheme="eurofurence"
-                        android:host="event"/>
-                <data
-                        android:scheme="eurofurence"
-                        android:host="dealer"/>
-                <data
-                        android:scheme="eurofurence"
-                        android:host="info"/>
             </intent-filter>
         </activity>
 
         <activity android:name=".ui.RouterActivity">
             <intent-filter>
                 <action android:name="android.intent.action.VIEW" />
+
+                <category android:name="android.intent.category.DEFAULT"/>
+                <category android:name="android.intent.category.BROWSABLE"/>
+
+                <data
+                        android:scheme="eurofurence"/>
+                <data android:scheme="https"
+                      android:host="app.eurofurence.org"/>
             </intent-filter>
         </activity>
 

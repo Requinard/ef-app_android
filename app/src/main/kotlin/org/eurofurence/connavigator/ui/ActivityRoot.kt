@@ -328,7 +328,6 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
 
 
     override fun navigateToDealer(dealer: DealerRecord) {
-        navigateToSubFragment(FragmentViewDealer(dealer))
     }
 
     private fun navigateToSubFragment(fragment: Fragment) =
