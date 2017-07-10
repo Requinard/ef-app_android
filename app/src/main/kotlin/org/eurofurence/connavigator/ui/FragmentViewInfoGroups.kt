@@ -15,9 +15,10 @@ import android.widget.TextView
 import io.swagger.client.model.KnowledgeEntryRecord
 import io.swagger.client.model.KnowledgeGroupRecord
 import org.eurofurence.connavigator.R
+import org.eurofurence.connavigator.broadcast.Route
+import org.eurofurence.connavigator.broadcast.pushRoute
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.lazyLocateDb
-import org.eurofurence.connavigator.net.imageService
 import org.eurofurence.connavigator.tracking.Analytics
 import org.eurofurence.connavigator.ui.communication.ContentAPI
 import org.eurofurence.connavigator.util.*
@@ -87,12 +88,10 @@ class FragmentViewInfoGroups : Fragment(), ContentAPI, HasDb {
 
                 // Handle clicks
                 holder.itemView.setOnClickListener {
-                    applyOnRoot { navigateToKnowledgeEntry(entry) }
-                    vibrator.short()
+                    history.send(Route("/info/${entry.id}"))
                 }
                 holder.itemView.setOnLongClickListener {
                     startActivity(SharingUtility.share(Formatter.shareInfo(entry))).let { true }
-                    vibrator.long().let { true }
                 }
             }
         }
@@ -101,8 +100,7 @@ class FragmentViewInfoGroups : Fragment(), ContentAPI, HasDb {
 
     // View
     val infoGroups: RecyclerView by view()
-
-    val vibrator by lazy { TouchVibrator(context) }
+    val history by lazy { pushRoute.bind(context) }
 
     // Store of currently displayed info groups and items
     var effectiveInterleaved = emptyList<Choice<KnowledgeGroupRecord, KnowledgeEntryRecord>>()

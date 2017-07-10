@@ -89,6 +89,7 @@ class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
     val routes = mapOf(
             Regregexex("/") to FragmentViewHome::class,
             Regregexex("/info") to FragmentViewInfoGroups::class,
+            Regregexex("/info/{uid}") to FragmentViewInfo::class,
             Regregexex("/event") to FragmentViewEvents::class,
             Regregexex("/event/{uid}") to FragmentViewEvent::class,
             Regregexex("/dealer") to FragmentViewDealers::class,
@@ -194,6 +195,7 @@ class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
             info { "Starting fragment transaction" }
 
             supportFragmentManager.beginTransaction()
+                    .setCustomAnimations(R.anim.in_slide_and_fade, R.anim.out_slide_and_fade, R.anim.in_slide_and_fade, R.anim.out_slide_and_fade)
                     .replace(1, instance)
                     .commitAllowingStateLoss()
         } else {
@@ -210,7 +212,7 @@ class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
             info { "History now contains ${history.size} items" }
 
             supportFragmentManager.beginTransaction()
-                    .remove(current!!.second)
+                    .setCustomAnimations(R.anim.in_slide_and_fade, R.anim.out_slide_and_fade, R.anim.in_slide_and_fade, R.anim.out_slide_and_fade)
                     .replace(1, lastHistory.second)
                     .commit()
         } else {

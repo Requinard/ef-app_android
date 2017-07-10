@@ -20,6 +20,7 @@ import org.eurofurence.connavigator.util.Formatter
 import org.eurofurence.connavigator.util.extensions.*
 import org.jetbrains.anko.*
 import us.feras.mdv.MarkdownView
+import java.util.*
 
 
 /**
@@ -29,14 +30,6 @@ class FragmentViewInfo() : Fragment(), HasDb {
     override val db by lazyLocateDb()
 
     val ui by lazy { InfoUi() }
-
-    /**
-     * Constructs the info view with an assigned bundle
-     */
-    constructor(knowledgeEntry: KnowledgeEntryRecord) : this() {
-        arguments = Bundle()
-        arguments.jsonObjects["knowledgeEntry"] = knowledgeEntry
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
         ui.createView(AnkoContext.create(context.applicationContext, container!!))
@@ -49,8 +42,9 @@ class FragmentViewInfo() : Fragment(), HasDb {
 
         applyOnRoot { changeTitle("Information") }
         // Get info if it exists
-        if ("knowledgeEntry" in arguments) {
-            val knowledgeEntry: KnowledgeEntryRecord = arguments.jsonObjects["knowledgeEntry"]
+        if ("uid" in arguments) {
+            val uid = UUID.fromString(arguments.getString("uid"))
+            val knowledgeEntry = db.knowledgeEntries[uid]!!
 
             Analytics.event(Analytics.Category.INFO, Analytics.Action.OPENED, knowledgeEntry.title)
 
