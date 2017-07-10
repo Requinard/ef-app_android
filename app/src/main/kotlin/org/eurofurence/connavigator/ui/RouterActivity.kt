@@ -1,18 +1,30 @@
 package org.eurofurence.connavigator.ui
 
+import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.preference.PreferenceActivity
 import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
+import android.support.v4.view.GravityCompat
+import android.support.v4.widget.DrawerLayout
 import android.support.v7.app.ActionBarDrawerToggle
+import android.support.v7.app.AlertDialog
 import android.support.v7.app.AppCompatActivity
 import android.support.v7.widget.Toolbar
+import android.view.ContextThemeWrapper
 import android.view.Gravity
 import android.view.View
 import org.eurofurence.connavigator.R
-import org.eurofurence.connavigator.util.extensions.appBarLayout
-import org.eurofurence.connavigator.util.extensions.coordinatorLayout
-import org.eurofurence.connavigator.util.extensions.navigationView
-import org.eurofurence.connavigator.util.extensions.tabLayout
+import org.eurofurence.connavigator.broadcast.Route
+import org.eurofurence.connavigator.broadcast.pushRoute
+import org.eurofurence.connavigator.database.Db
+import org.eurofurence.connavigator.database.HasDb
+import org.eurofurence.connavigator.database.UpdateIntentService
+import org.eurofurence.connavigator.database.lazyLocateDb
+import org.eurofurence.connavigator.net.imageService
+import org.eurofurence.connavigator.pref.AuthPreferences
+import org.eurofurence.connavigator.util.extensions.*
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
 import org.jetbrains.anko.support.v4.drawerLayout
@@ -71,16 +83,24 @@ data class Regregexex(val value: String) {
 /**
  * Router for fragments
  */
-class RouterActivity : AppCompatActivity(), AnkoLogger {
+class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
+    override val db by lazyLocateDb()
+
     val routes = mapOf(
             Regregexex("/") to FragmentViewHome::class,
             Regregexex("/info") to FragmentViewInfoGroups::class,
             Regregexex("/event") to FragmentViewEvents::class,
-            Regregexex("/event/{uid}") to FragmentViewEvent::class
+            Regregexex("/event/{uid}") to FragmentViewEvent::class,
+            Regregexex("/dealer") to FragmentViewDealers::class,
+            Regregexex("/maps") to FragmentViewMaps::class,
+            Regregexex("/about") to FragmentViewAbout::class,
+            Regregexex("/messages") to FragmentViewMessages::class
     )
 
     val history = Stack<Pair<Regregexex, Fragment>>()
     val ui = RouterUi()
+    val update by pushRoute
+
     var current: Pair<Regregexex, Fragment>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -92,14 +112,55 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
 
         info { "Sending router to default activity" }
 
-        push("/")
+        push(Route("/"))
+
+        update.listen { push(it) }
+
+        configureNavigation()
     }
 
-    fun push(newRoute: String) {
-        info { "Pushing route $newRoute" }
+    private fun configureNavigation() {
+        ui.navigation.setNavigationItemSelectedListener  {
+            when (it.itemId) {
+                R.id.navHome -> update.send(Route("/"))
+                R.id.navInfo -> update.send(Route("/info"))
+                R.id.navEvents -> update.send(Route("/event"))
+                R.id.navDealersDen -> update.send(Route("/dealer"))
+                R.id.navMaps -> update.send(Route("/maps"))
+                R.id.navAbout -> update.send(Route("/about"))
+                R.id.navLogin -> startActivity<LoginActivity>()
+                R.id.navMessages -> {
+                    if(AuthPreferences.isLoggedIn())
+                        update.send(Route("/messages"))
+                    else
+                        longToast("You need to login before you can see private messages!")
+                }
+                R.id.navWebSite -> browse("https://www.eurofurence.org/")
+                R.id.navWebTwitter -> browse("https://twitter.com/eurofurence")
+                R.id.navDevReload -> UpdateIntentService.dispatchUpdate(this)
+                R.id.navDevSettings -> startActivity<PreferenceActivity>()
+                R.id.navDevClear -> {
+                    AlertDialog.Builder(ContextThemeWrapper(this, R.style.appcompatDialog))
+                            .setTitle("Clearing Database")
+                            .setMessage("This will get rid of all cached items you have stored locally. You will need an internet connection to restart!")
+                            .setPositiveButton("Clear", { dialogInterface, i -> db.clear(); imageService.clear(); System.exit(0) })
+                            .setNegativeButton("Cancel", { dialogInterface, i -> })
+                            .show()
+                }
+                else -> Unit
+            }
+
+            ui.drawer.closeDrawer(GravityCompat.START)
+
+            true
+        }
+    }
+
+    fun push(newRoute: Route) {
+        info { "Pushing url $newRoute" }
 
         // Finding
-        val route = routes.keys.find { it.basicMatch(newRoute) }
+        val route = routes.keys.find { it.basicMatch(newRoute.url) }
         if (route != null) {
             // Get the fragment
             val fragment = routes[route]!!
@@ -116,7 +177,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
 
             // Match the bound parameters
             instance.arguments = Bundle()
-            route.match(newRoute).forEach { instance.arguments.putString(it.key, it.value) }
+            route.match(newRoute.url).forEach { instance.arguments.putString(it.key, it.value) }
 
             current = Pair(route, instance)
 
@@ -127,7 +188,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
                     .replace(1, instance)
                     .commitAllowingStateLoss()
         } else {
-            warn { "Supplied route was not valid" }
+            warn { "Supplied url was not valid" }
         }
     }
 
@@ -149,12 +210,15 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
     }
 }
 
+
 class RouterUi : AnkoComponent<RouterActivity>, AnkoLogger {
     lateinit var toolbar: Toolbar
     lateinit var navigation: NavigationView
+    lateinit var drawer: DrawerLayout
 
     override fun createView(ui: AnkoContext<RouterActivity>) = with(ui) {
         drawerLayout {
+            drawer = this
             lparams(matchParent, matchParent)
             backgroundResource = R.color.backgroundGrey
             fitsSystemWindows = true
@@ -203,13 +267,7 @@ class RouterUi : AnkoComponent<RouterActivity>, AnkoLogger {
                 inflateHeaderView(R.layout.layout_nav_header)
 
                 inflateMenu(R.menu.nav_drawer)
-
-                setNavigationItemSelectedListener {
-                    info { it.itemId }
-                    true
-                }
             }
         }
     }
-
 }
