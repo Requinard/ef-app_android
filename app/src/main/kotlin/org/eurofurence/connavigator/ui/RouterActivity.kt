@@ -38,6 +38,10 @@ data class Regregexex(val value: String) {
     val keys: List<String>
         get() = compiled.second
 
+    fun basicMatch(string: String) =
+            compiled.first
+                    .matches(string)
+
     /**
      * Matches a string and returns the assignments.
      */
@@ -53,19 +57,18 @@ data class Regregexex(val value: String) {
 
 
 /**
- * Created by requinard on 7/9/17.
+ * Router for fragments
  */
 class RouterActivity : AppCompatActivity(), AnkoLogger {
     val routes = mapOf(
-            "/" to FragmentViewHome::class,
-            "/info" to FragmentViewInfoGroups::class,
-            "/event" to FragmentViewEvents::class,
-            "/event/{uid}" to FragmentViewEvent::class
+            Regregexex("/") to FragmentViewHome::class,
+            Regregexex("/info") to FragmentViewInfoGroups::class,
+            Regregexex("/event") to FragmentViewEvents::class,
+            Regregexex("/event/{uid}") to FragmentViewEvent::class
     )
 
-    val history = Stack<Pair<String, Fragment>>()
-    val parameterBinder = Regex("""[{]([^}]+)[}]""")
-    var current: Pair<String, Fragment>? = null
+    val history = Stack<Pair<Regregexex, Fragment>>()
+    var current: Pair<Regregexex, Fragment>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
@@ -74,7 +77,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
 
         verticalLayout {
             button("Events") {
-                setOnClickListener { push("/event") }
+                setOnClickListener { push("/event/12a70ab4-8ffe-4442-a3ea-6f25a0e9cd0d") }
             }
             button("Info") {
                 setOnClickListener { push("/info") }
@@ -87,12 +90,15 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
         push("/")
     }
 
-    fun push(route: String) {
-        info { "Pushing route $route" }
+    fun push(newRoute: String) {
+        info { "Pushing route $newRoute" }
 
         // Finding
-        val fragment = routes[route]
-        if (fragment != null) {
+        val route = routes.keys.find { it.basicMatch(newRoute) }
+        if (route != null) {
+            // Get the fragment
+            val fragment = routes[route]!!
+
             info { "Route is valid. Creating instance" }
 
             // Since we are moving to a new element, we move current to the history
@@ -102,10 +108,12 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
 
             // then we re-assign current
             val instance = fragment.createInstance()
+
+            // Match the bound parameters
+            instance.arguments = Bundle()
+            route.match(newRoute).forEach { instance.arguments.putString(it.key, it.value) }
+
             current = Pair(route, instance)
-
-            // Now we check the URL for variables
-
 
             // And now we do transaction replacement
             info { "Starting fragment transaction" }

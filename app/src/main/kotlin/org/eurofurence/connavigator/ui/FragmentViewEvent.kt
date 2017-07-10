@@ -28,13 +28,15 @@ import org.eurofurence.connavigator.util.Formatter
 import org.eurofurence.connavigator.util.delegators.view
 import org.eurofurence.connavigator.util.extensions.*
 import org.eurofurence.connavigator.util.v2.get
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.info
 import us.feras.mdv.MarkdownView
 import java.util.*
 
 /**
  * Created by David on 4/9/2016.
  */
-class FragmentViewEvent() : Fragment(), HasDb {
+class FragmentViewEvent() : Fragment(), HasDb, AnkoLogger {
     companion object {
         val EVENT_STATUS_CHANGED = "org.eurofurence.connavigator.ui.EVENT_STATUS_CHANGED"
     }
@@ -72,39 +74,52 @@ class FragmentViewEvent() : Fragment(), HasDb {
 
         Analytics.screen(activity, "Event Specific")
 
+        if("uid" in arguments){
+            val uid = UUID.fromString(arguments["uid"].toString())
+            info {"Received uid $uid "}
+
+            val event = db.events[uid]
+
+            configureUi(event!!)
+        }
+
         if ("event" in arguments) {
             val event: EventRecord = arguments.jsonObjects["event"]
 
-            eventId = event.id
+            configureUi(event)
+        }
+    }
 
-            dataChanged.register()
+    private fun configureUi(event: EventRecord) {
+        eventId = event.id
 
-            Analytics.event(Analytics.Category.EVENT, Analytics.Action.OPENED, event.title)
+        dataChanged.register()
 
-            val conferenceRoom = event[toRoom]
-            val conferenceDay = event[toDay]
+        Analytics.event(Analytics.Category.EVENT, Analytics.Action.OPENED, event.title)
 
-            title.text = event.fullTitle()
+        val conferenceRoom = event[toRoom]
+        val conferenceDay = event[toDay]
 
-            description.loadMarkdown(event.description)
+        title.text = event.fullTitle()
 
-            time.text = "${db.eventStart(event).dayOfWeek().asText} from ${event.startTimeString()} to ${event.endTimeString()}"
-            organizers.text = event.ownerString()
-            room.text = conferenceRoom!!.name
+        description.loadMarkdown(event.description)
 
-            // temporary fix until we get the actual images
-            imageService.load(db.images[event.posterImageId], image)
-            
-            changeFabIcon()
+        time.text = "${db.eventStart(event).dayOfWeek().asText} from ${event.startTimeString()} to ${event.endTimeString()}"
+        organizers.text = event.ownerString()
+        room.text = conferenceRoom!!.name
 
-            buttonSave.setOnClickListener {
-                EventDialog(event).show(activity.supportFragmentManager, "Event Dialog").let { true }
-            }
+        // temporary fix until we get the actual images
+        imageService.load(db.images[event.posterImageId], image)
 
-            buttonSave.setOnLongClickListener {
-                context.sendBroadcast(IntentFor<EventFavoriteBroadcast>(context).apply { jsonObjects["event"] = event })
-                true
-            }
+        changeFabIcon()
+
+        buttonSave.setOnClickListener {
+            EventDialog(event).show(activity.supportFragmentManager, "Event Dialog").let { true }
+        }
+
+        buttonSave.setOnLongClickListener {
+            context.sendBroadcast(IntentFor<EventFavoriteBroadcast>(context).apply { jsonObjects["event"] = event })
+            true
         }
     }
 
