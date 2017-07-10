@@ -148,7 +148,7 @@ class RouterActivity : AppCompatActivity(), HasDb, AnkoLogger {
                 R.id.navWebSite -> browse("https://www.eurofurence.org/")
                 R.id.navWebTwitter -> browse("https://twitter.com/eurofurence")
                 R.id.navDevReload -> UpdateIntentService.dispatchUpdate(this)
-                R.id.navDevSettings -> startActivity<PreferenceActivity>()
+                R.id.navDevSettings -> startActivity<ActivitySettings>()
                 R.id.navDevClear -> {
                     AlertDialog.Builder(ContextThemeWrapper(this, R.style.appcompatDialog))
                             .setTitle("Clearing Database")
