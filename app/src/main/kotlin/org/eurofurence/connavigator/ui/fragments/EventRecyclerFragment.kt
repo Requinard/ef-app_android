@@ -3,12 +3,9 @@ package org.eurofurence.connavigator.ui.fragments
 import android.os.Bundle
 import android.support.v4.app.Fragment
 import android.support.v4.content.ContextCompat.getColor
-import android.support.v7.view.ContextThemeWrapper
 import android.support.v7.widget.DefaultItemAnimator
 import android.support.v7.widget.LinearLayoutManager
 import android.support.v7.widget.RecyclerView
-import android.text.SpannableStringBuilder
-import android.text.style.ImageSpan
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,15 +20,15 @@ import nl.komponents.kovenant.ui.promiseOnUi
 import nl.komponents.kovenant.ui.successUi
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.broadcast.DataChanged
+import org.eurofurence.connavigator.broadcast.Route
+import org.eurofurence.connavigator.broadcast.pushRoute
 import org.eurofurence.connavigator.database.*
 import org.eurofurence.connavigator.net.imageService
 import org.eurofurence.connavigator.pref.RemotePreferences
-import org.eurofurence.connavigator.ui.FragmentViewEvent
 import org.eurofurence.connavigator.ui.communication.ContentAPI
 import org.eurofurence.connavigator.ui.dialogs.EventDialog
 import org.eurofurence.connavigator.ui.filters.EventList
 import org.eurofurence.connavigator.ui.views.NonScrollingLinearLayout
-import org.eurofurence.connavigator.util.EmbeddedLocalBroadcastReceiver
 import org.eurofurence.connavigator.util.Formatter
 import org.eurofurence.connavigator.util.delegators.view
 import org.eurofurence.connavigator.util.extensions.*
@@ -54,11 +51,11 @@ class EventRecyclerFragment() : Fragment(), ContentAPI, HasDb, AnkoLogger {
             dataUpdated()
         }
     }
+    val history by lazy { pushRoute.bind(context) }
 
     lateinit var eventList: EventList
     var title = ""
     var scrolling = true
-
     var effectiveEvents = emptyList<EventRecord>()
 
     constructor(eventList: EventList, title: String = "", scrolling: Boolean = true) : this() {
@@ -140,7 +137,7 @@ class EventRecyclerFragment() : Fragment(), ContentAPI, HasDb, AnkoLogger {
             // Assign the on-click action
             holder.itemView.setOnClickListener {
                 logd { "Short event click" }
-                applyOnRoot { navigateToEvent(event) }
+                history.send(Route("/event/${event.id}"))
             }
             holder.itemView.setOnLongClickListener {
                 EventDialog(event).show(activity.supportFragmentManager, "Kek")

@@ -11,6 +11,7 @@ import android.view.ViewGroup
 import android.widget.EditText
 import com.pawegio.kandroid.textWatcher
 import org.eurofurence.connavigator.R
+import org.eurofurence.connavigator.broadcast.pushRoute
 import org.eurofurence.connavigator.pref.AppPreferences
 import org.eurofurence.connavigator.database.*
 import org.eurofurence.connavigator.tracking.Analytics
@@ -26,6 +27,11 @@ import org.joda.time.format.DateTimeFormat
  */
 class FragmentViewEvents : Fragment(), ContentAPI, HasDb {
     override val db by lazyLocateDb()
+
+    val eventPager: ViewPager by view()
+    val eventSearchBar: EditText by view()
+    val searchEventFilter by lazy { filterEvents() }
+    val searchFragment by lazy { EventRecyclerFragment(searchEventFilter) }
 
     inner class EventFragmentPagerAdapter : FragmentStatePagerAdapter(childFragmentManager) {
         override fun getPageTitle(position: Int): CharSequence? {
@@ -46,14 +52,6 @@ class FragmentViewEvents : Fragment(), ContentAPI, HasDb {
             return days.size
         }
     }
-
-    val eventPager: ViewPager by view()
-    val eventSearchBar: EditText by view()
-
-    val searchEventFilter by lazy { filterEvents() }
-
-    val searchFragment by lazy { EventRecyclerFragment(searchEventFilter) }
-
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             inflater.inflate(R.layout.fview_events_viewpager, container, false)
