@@ -1,9 +1,21 @@
 package org.eurofurence.connavigator.ui
 
 import android.os.Bundle
+import android.support.design.widget.NavigationView
 import android.support.v4.app.Fragment
+import android.support.v7.app.ActionBarDrawerToggle
 import android.support.v7.app.AppCompatActivity
+import android.support.v7.widget.Toolbar
+import android.view.Gravity
+import android.view.View
+import org.eurofurence.connavigator.R
+import org.eurofurence.connavigator.util.extensions.appBarLayout
+import org.eurofurence.connavigator.util.extensions.coordinatorLayout
+import org.eurofurence.connavigator.util.extensions.navigationView
+import org.eurofurence.connavigator.util.extensions.tabLayout
 import org.jetbrains.anko.*
+import org.jetbrains.anko.appcompat.v7.toolbar
+import org.jetbrains.anko.support.v4.drawerLayout
 import java.util.*
 import kotlin.reflect.full.createInstance
 
@@ -68,6 +80,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
     )
 
     val history = Stack<Pair<Regregexex, Fragment>>()
+    val ui = RouterUi()
     var current: Pair<Regregexex, Fragment>? = null
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -75,15 +88,7 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
 
         info { "Creating router" }
 
-        verticalLayout {
-            button("Events") {
-                setOnClickListener { push("/event/12a70ab4-8ffe-4442-a3ea-6f25a0e9cd0d") }
-            }
-            button("Info") {
-                setOnClickListener { push("/info") }
-            }
-            id = 1
-        }
+        ui.setContentView(this)
 
         info { "Sending router to default activity" }
 
@@ -142,4 +147,67 @@ class RouterActivity : AppCompatActivity(), AnkoLogger {
             super.onBackPressed()
         }
     }
+}
+
+class RouterUi : AnkoComponent<RouterActivity>, AnkoLogger {
+    lateinit var toolbar: Toolbar
+    lateinit var navigation: NavigationView
+
+    override fun createView(ui: AnkoContext<RouterActivity>) = with(ui) {
+        drawerLayout {
+            lparams(matchParent, matchParent)
+            backgroundResource = R.color.backgroundGrey
+            fitsSystemWindows = true
+
+            coordinatorLayout {
+                lparams(matchParent, matchParent)
+
+                verticalLayout {
+                    lparams(matchParent, matchParent)
+
+                    appBarLayout {
+                        val toggle = ActionBarDrawerToggle(
+                                ui.owner, this@drawerLayout, R.string.navigation_drawer_open, R.string.navigation_drawer_close
+                        )
+                        addDrawerListener(toggle)
+                        toggle.syncState()
+
+                        lparams(matchParent, wrapContent)
+
+                        toolbar = toolbar {
+                            lparams(matchParent, wrapContent)
+                            title = "Eurofurence"
+                        }
+
+                        tabLayout {
+                            lparams(matchParent, wrapContent)
+                            visibility = View.GONE
+                        }
+                    }
+
+                    frameLayout {
+                        lparams(matchParent, wrapContent)
+                        id = 1
+                    }
+                }
+            }
+
+
+            navigation = navigationView {
+                lparams(matchParent, wrapContent) {
+                    gravity = Gravity.START
+                }
+
+                inflateHeaderView(R.layout.layout_nav_header)
+
+                inflateMenu(R.menu.nav_drawer)
+
+                setNavigationItemSelectedListener {
+                    info { it.itemId }
+                    true
+                }
+            }
+        }
+    }
+
 }
