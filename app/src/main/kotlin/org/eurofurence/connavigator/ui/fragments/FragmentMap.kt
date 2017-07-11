@@ -14,6 +14,8 @@ import com.google.gson.Gson
 import io.swagger.client.model.MapEntryRecord
 import io.swagger.client.model.MapRecord
 import org.eurofurence.connavigator.R
+import org.eurofurence.connavigator.broadcast.Route
+import org.eurofurence.connavigator.broadcast.pushRoute
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.lazyLocateDb
 import org.eurofurence.connavigator.net.imageService
@@ -36,6 +38,7 @@ class FragmentMap() : Fragment(), ContentAPI, HasDb, AnkoLogger {
     }
 
     val ui = MapUi()
+    val history by lazy { pushRoute.bind(context) }
     var mapRecord by notNull<MapRecord>()
     val image by lazy { db.images[mapRecord.imageId]!! }
 
@@ -103,7 +106,7 @@ class FragmentMap() : Fragment(), ContentAPI, HasDb, AnkoLogger {
 
         ui.linkTitle.text = "Read more about ${dealer!!.getName()}"
         ui.linkLayout.setOnClickListener {
-            applyOnRoot { navigateToDealer(dealer) }
+            history.send(Route("/dealer/${UUID.fromString(entry.links.first().target)}"))
         }
     }
 
