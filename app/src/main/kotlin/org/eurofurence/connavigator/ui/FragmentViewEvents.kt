@@ -9,6 +9,7 @@ import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.EditText
+import android.widget.LinearLayout
 import com.pawegio.kandroid.textWatcher
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
@@ -91,11 +92,11 @@ class FragmentViewEvents : Fragment(), ContentAPI, HasDb {
         when (eventPager.visibility) {
             View.VISIBLE -> {
                 eventPager.visibility = View.GONE
-                activity.findViewById(R.id.searchLayout).visibility = View.VISIBLE
+                activity.findViewById<LinearLayout>(R.id.searchLayout).visibility = View.VISIBLE
             }
             else -> {
                 eventPager.visibility = View.VISIBLE
-                activity.findViewById(R.id.searchLayout).visibility = View.GONE
+                activity.findViewById<LinearLayout>(R.id.searchLayout).visibility = View.GONE
             }
         }
     }

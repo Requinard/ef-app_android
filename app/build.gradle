@@ -11,14 +11,14 @@ tasks.withType(org.jetbrains.kotlin.gradle.tasks.KotlinCompile).all {
 
 android {
 
-    compileSdkVersion 25
+    compileSdkVersion 26
     buildToolsVersion "26.0.1"
 
     defaultConfig {
         minSdkVersion 16
-        targetSdkVersion 25
-        versionCode 77
-        versionName "2.0.12"
+        targetSdkVersion 26
+        versionCode 1
+        versionName "0.1"
         multiDexEnabled true
     }
 
@@ -71,12 +71,12 @@ android {
             // to pre-dex each module and produce an APK that can be tested on
             // Android Lollipop without time consuming dex merging processes.
             minSdkVersion 21
-            applicationId "org.eurofurence.connavigator.debug"
+            applicationId "com.gdakon.connavigator.debug"
         }
         prod {
             // The actual minSdkVersion for the application.
             minSdkVersion 16
-            applicationId "org.eurofurence.connavigator"
+            applicationId "com.gdakon.connavigator"
         }
     }
 }

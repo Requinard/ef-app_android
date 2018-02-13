@@ -16,7 +16,7 @@ import java.io.File
  * The API services manage extended API functionality
  */
 object apiService {
-    val apiPath = "https://app.eurofurence.org"
+    val apiPath = "https://gdakon.terarion.com"
 
     val announcements by lazy { AnnouncementsApi().apply { basePath = apiPath } }
 

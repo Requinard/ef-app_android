@@ -1,27 +1,27 @@
 {
   "project_info": {
-    "project_number": "1003745003618",
-    "firebase_url": "https://eurofurence-de86f.firebaseio.com",
-    "project_id": "eurofurence-de86f",
-    "storage_bucket": "eurofurence-de86f.appspot.com"
+    "project_number": "511155621688",
+    "firebase_url": "https://gdakon-225db.firebaseio.com",
+    "project_id": "gdakon-225db",
+    "storage_bucket": "gdakon-225db.appspot.com"
   },
   "client": [
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1003745003618:android:d7da113c1dd5fb6a",
+        "mobilesdk_app_id": "1:511155621688:android:11cf1d999cf935e8",
         "android_client_info": {
-          "package_name": "org.eurofurence.connavigator.debug"
+          "package_name": "com.gdakon.app"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1003745003618-nrn1e3ei4kofrroqe1egcbatmrts4r2o.apps.googleusercontent.com",
+          "client_id": "511155621688-3t0v90ckc061028mq49s1uakecq0i7jp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCoy8lY9f4cWx2fvS1HMBJaNHCkFWxm8DY"
+          "current_key": "AIzaSyB5iIWbwvULksZwiR4oicfe8wYem9-GoB8"
         }
       ],
       "services": {
@@ -39,20 +39,51 @@
     },
     {
       "client_info": {
-        "mobilesdk_app_id": "1:1003745003618:android:30d3376dc7797486",
+        "mobilesdk_app_id": "1:511155621688:android:02f1e1843510f7c8",
         "android_client_info": {
-          "package_name": "org.eurofurence.connavigator"
+          "package_name": "com.gdakon.connavigator"
         }
       },
       "oauth_client": [
         {
-          "client_id": "1003745003618-nrn1e3ei4kofrroqe1egcbatmrts4r2o.apps.googleusercontent.com",
+          "client_id": "511155621688-3t0v90ckc061028mq49s1uakecq0i7jp.apps.googleusercontent.com",
           "client_type": 3
         }
       ],
       "api_key": [
         {
-          "current_key": "AIzaSyCoy8lY9f4cWx2fvS1HMBJaNHCkFWxm8DY"
+          "current_key": "AIzaSyB5iIWbwvULksZwiR4oicfe8wYem9-GoB8"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:511155621688:android:bfc85e0ed8828c36",
+        "android_client_info": {
+          "package_name": "com.gdakon.connavigator.debug"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "511155621688-3t0v90ckc061028mq49s1uakecq0i7jp.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB5iIWbwvULksZwiR4oicfe8wYem9-GoB8"
         }
       ],
       "services": {
