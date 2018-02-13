@@ -2,11 +2,11 @@
 <resources>
     <color name="blackFaded">#20000000</color>
     <color name="primaryFaded">#20006459</color>
-    <color name="primaryLighter">#228B80</color>
-    <color name="primaryLight">#0b786c</color>
-    <color name="primary">#006459</color>
-    <color name="primaryDark">#004E46</color>
-    <color name="primaryDarker">#00332E</color>
+    <color name="primaryLighter">#A38677</color>
+    <color name="primaryLight">#8F6C5A</color>
+    <color name="primary">#7b523d</color>
+    <color name="primaryDark">#734B37</color>
+    <color name="primaryDarker">#68412F</color>
     <color name="accentLighter">#9CCFF3</color>
     <color name="accentLight">#6CB5E9</color>
     <color name="accent">#47A0DF</color>

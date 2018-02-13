@@ -5,10 +5,12 @@
         <item
                 android:id="@+id/navHome"
                 android:icon="@drawable/icon_home"
+                android:visible="false"
                 android:title="Home"/>
         <item
                 android:id="@+id/navInfo"
                 android:icon="@drawable/icon_info"
+                android:visible="false"
                 android:title="Info"/>
         <item
                 android:id="@+id/navEvents"
@@ -17,10 +19,12 @@
         <item
                 android:id="@+id/navDealersDen"
                 android:icon="@drawable/icon_dealer"
+                android:visible="false"
                 android:title="Dealers den"/>
         <item
                 android:id="@+id/navMaps"
                 android:icon="@drawable/icon_map_world"
+                android:visible="false"
                 android:title="Maps"/>
         <item
                 android:id="@+id/navAbout"
@@ -32,7 +36,8 @@
                 android:title="Points of Interest"/>
     </group>
 
-    <item android:title="Personal">
+    <item android:title="Personal"
+    android:visible="false">
         <menu>
             <item
                     android:id="@+id/navLogin"

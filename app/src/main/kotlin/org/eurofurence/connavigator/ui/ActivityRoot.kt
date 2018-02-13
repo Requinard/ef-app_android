@@ -189,7 +189,7 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
     }
 
     private fun setupContent() =
-            navigateRoot(FragmentViewHome::class.java, ActionBarMode.HOME)
+            navigateRoot(FragmentViewEvents::class.java, ActionBarMode.SEARCHTABSFILTER)
 
     override fun onResume() {
         super.onResume()
@@ -212,7 +212,7 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
         } else if (supportFragmentManager.backStackEntryCount > 0) {
             super.onBackPressed()
         } else if (onHome == false) {
-            navigateRoot(FragmentViewHome::class.java, ActionBarMode.HOME)
+            navigateRoot(FragmentViewEvents::class.java, ActionBarMode.SEARCHTABSFILTER )
         } else {
             alert("Are you sure you want to close the app? You'll still receive messages", "Close the app") {
                 yesButton { super.onBackPressed() }
@@ -323,8 +323,8 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
                         browse(url)
                     }
                 }
-                R.id.navWebSite -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.eurofurence.org/")))
-                R.id.navWebTwitter -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/eurofurence")))
+                R.id.navWebSite -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://www.gdakon.org/")))
+                R.id.navWebTwitter -> startActivity(Intent(Intent.ACTION_VIEW, Uri.parse("https://twitter.com/GdakonPL")))
                 R.id.navDevReload -> UpdateIntentService.dispatchUpdate(this)
                 R.id.navDevSettings -> handleSettings()
                 R.id.navDevClear -> {
