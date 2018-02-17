@@ -189,7 +189,7 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
     }
 
     private fun setupContent() =
-            navigateRoot(FragmentViewEvents::class.java, ActionBarMode.SEARCHTABSFILTER)
+            navigateRoot(FragmentViewHome::class.java, ActionBarMode.NONE)
 
     override fun onResume() {
         super.onResume()
