@@ -4,9 +4,11 @@ import android.os.Bundle
 import android.support.v7.app.AppCompatActivity
 import android.view.View
 import android.widget.Button
+import android.widget.ImageView
 import android.widget.ProgressBar
 import com.chibatching.kotpref.bulk
 import com.google.firebase.perf.metrics.AddTrace
+import com.nostra13.universalimageloader.core.imageaware.ImageViewAware
 import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.broadcast.ResetReceiver
@@ -108,9 +110,9 @@ class StartUi : AnkoComponent<ActivityStart> {
         verticalLayout {
             backgroundResource = R.color.primary
 
-            imageView { imageResource = R.drawable.logo }.lparams(
-                    matchParent, (displayMetrics.heightPixels * 0.5).toInt()
-            )
+            imageView {
+                this.setImageResource(R.drawable.logo)
+            }.lparams(matchParent, displayMetrics.heightPixels / 2)
 
             nextButton = button("We're just loading some data for you. Hang tight!") {
                 isEnabled = false
