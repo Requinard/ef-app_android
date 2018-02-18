@@ -23,7 +23,6 @@
         <item
                 android:id="@+id/navMaps"
                 android:icon="@drawable/icon_map_world"
-                android:visible="false"
                 android:title="Maps"/>
         <item
                 android:id="@+id/navAbout"
