@@ -89,6 +89,7 @@ class FragmentViewEvent() : Fragment(), HasDb {
 
             time.text = "${db.eventStart(event).dayOfWeek().asText} from ${event.startTimeString()} to ${event.endTimeString()}"
             organizers.text = event.ownerString()
+            organizers.visibility = View.INVISIBLE
             room.text = conferenceRoom!!.name
 
             if (event.posterImageId !== null) {
