@@ -68,7 +68,6 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
     val toolbar: Toolbar by view()
     override val tabs: TabLayout by view()
     val drawer: DrawerLayout by view()
-    val fab: FloatingActionButton by view()
 
     // Views in navigation view
     val navView: NavigationView by view()
@@ -212,7 +211,7 @@ class ActivityRoot : AppCompatActivity(), RootAPI, SharedPreferences.OnSharedPre
         } else if (supportFragmentManager.backStackEntryCount > 0) {
             super.onBackPressed()
         } else if (onHome == false) {
-            navigateRoot(FragmentViewEvents::class.java, ActionBarMode.SEARCHTABSFILTER )
+            navigateRoot(FragmentViewHome::class.java, ActionBarMode.HOME )
         } else {
             alert("Are you sure you want to close the app? You'll still receive messages", "Close the app") {
                 yesButton { super.onBackPressed() }
