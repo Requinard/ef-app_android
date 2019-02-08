@@ -1,17 +1,19 @@
 # ImagesApi
 
-All URIs are relative to *https://localhost/*
+All URIs are relative to *https://localhost*
 
 Method | HTTP request | Description
 ------------- | ------------- | -------------
-[**apiV2ImagesByIdContentGet**](ImagesApi.md#apiV2ImagesByIdContentGet) | **GET** /Api/v2/Images/{Id}/Content | Retrieve a single image content.
-[**apiV2ImagesByIdGet**](ImagesApi.md#apiV2ImagesByIdGet) | **GET** /Api/v2/Images/{Id} | Retrieve a single image.
-[**apiV2ImagesGet**](ImagesApi.md#apiV2ImagesGet) | **GET** /Api/v2/Images | Retrieves a list of all images.
+[**apiImagesByIdContentGet**](ImagesApi.md#apiImagesByIdContentGet) | **GET** /Api/Images/{Id}/Content | Retrieve a single image content.
+[**apiImagesByIdContentPut**](ImagesApi.md#apiImagesByIdContentPut) | **PUT** /Api/Images/{Id}/Content | 
+[**apiImagesByIdContentWithHashcontentHashBase64EncodedGet**](ImagesApi.md#apiImagesByIdContentWithHashcontentHashBase64EncodedGet) | **GET** /Api/Images/{Id}/Content/with-hash:{contentHashBase64Encoded} | Retrieve a single image content using hash code (preferred, as it allows caching).
+[**apiImagesByIdGet**](ImagesApi.md#apiImagesByIdGet) | **GET** /Api/Images/{Id} | Retrieve a single image.
+[**apiImagesGet**](ImagesApi.md#apiImagesGet) | **GET** /Api/Images | Retrieves a list of all images.
 
 
-<a name="apiV2ImagesByIdContentGet"></a>
-# **apiV2ImagesByIdContentGet**
-> byte[] apiV2ImagesByIdContentGet(id)
+<a name="apiImagesByIdContentGet"></a>
+# **apiImagesByIdContentGet**
+> byte[] apiImagesByIdContentGet(id)
 
 Retrieve a single image content.
 
@@ -23,10 +25,10 @@ Retrieve a single image content.
 ImagesApi apiInstance = new ImagesApi();
 UUID id = new UUID(); // UUID | id of the requested entity
 try {
-    byte[] result = apiInstance.apiV2ImagesByIdContentGet(id);
+    byte[] result = apiInstance.apiImagesByIdContentGet(id);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling ImagesApi#apiV2ImagesByIdContentGet");
+    System.err.println("Exception when calling ImagesApi#apiImagesByIdContentGet");
     e.printStackTrace();
 }
 ```
@@ -50,9 +52,96 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
-<a name="apiV2ImagesByIdGet"></a>
-# **apiV2ImagesByIdGet**
-> ImageRecord apiV2ImagesByIdGet(id)
+<a name="apiImagesByIdContentPut"></a>
+# **apiImagesByIdContentPut**
+> apiImagesByIdContentPut(id, imageContent)
+
+
+
+  * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;KnowledgeBase-Maintainer&#x60;**, **&#x60;System&#x60;**
+
+### Example
+```java
+// Import classes:
+//import io.swagger.client.api.ImagesApi;
+
+ImagesApi apiInstance = new ImagesApi();
+UUID id = new UUID(); // UUID | 
+String imageContent = "imageContent_example"; // String | 
+try {
+    apiInstance.apiImagesByIdContentPut(id, imageContent);
+} catch (ApiException e) {
+    System.err.println("Exception when calling ImagesApi#apiImagesByIdContentPut");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | [**UUID**](.md)|  |
+ **imageContent** | **String**|  | [optional]
+
+### Return type
+
+null (empty response body)
+
+### Authorization
+
+[Bearer](../README.md#Bearer)
+
+### HTTP request headers
+
+ - **Content-Type**: application/json-patch+json, application/json, text/json, application/*+json
+ - **Accept**: Not defined
+
+<a name="apiImagesByIdContentWithHashcontentHashBase64EncodedGet"></a>
+# **apiImagesByIdContentWithHashcontentHashBase64EncodedGet**
+> byte[] apiImagesByIdContentWithHashcontentHashBase64EncodedGet(id, contentHashBase64Encoded)
+
+Retrieve a single image content using hash code (preferred, as it allows caching).
+
+### Example
+```java
+// Import classes:
+//import io.swagger.client.api.ImagesApi;
+
+ImagesApi apiInstance = new ImagesApi();
+UUID id = new UUID(); // UUID | id of the requested entity
+String contentHashBase64Encoded = "contentHashBase64Encoded_example"; // String | Base64 Encoded ContentHashSha1 of the requested entity
+try {
+    byte[] result = apiInstance.apiImagesByIdContentWithHashcontentHashBase64EncodedGet(id, contentHashBase64Encoded);
+    System.out.println(result);
+} catch (ApiException e) {
+    System.err.println("Exception when calling ImagesApi#apiImagesByIdContentWithHashcontentHashBase64EncodedGet");
+    e.printStackTrace();
+}
+```
+
+### Parameters
+
+Name | Type | Description  | Notes
+------------- | ------------- | ------------- | -------------
+ **id** | [**UUID**](.md)| id of the requested entity |
+ **contentHashBase64Encoded** | **String**| Base64 Encoded ContentHashSha1 of the requested entity |
+
+### Return type
+
+**byte[]**
+
+### Authorization
+
+No authorization required
+
+### HTTP request headers
+
+ - **Content-Type**: Not defined
+ - **Accept**: text/plain, application/json, text/json
+
+<a name="apiImagesByIdGet"></a>
+# **apiImagesByIdGet**
+> ImageRecord apiImagesByIdGet(id)
 
 Retrieve a single image.
 
@@ -64,10 +153,10 @@ Retrieve a single image.
 ImagesApi apiInstance = new ImagesApi();
 UUID id = new UUID(); // UUID | id of the requested entity
 try {
-    ImageRecord result = apiInstance.apiV2ImagesByIdGet(id);
+    ImageRecord result = apiInstance.apiImagesByIdGet(id);
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling ImagesApi#apiV2ImagesByIdGet");
+    System.err.println("Exception when calling ImagesApi#apiImagesByIdGet");
     e.printStackTrace();
 }
 ```
@@ -91,9 +180,9 @@ No authorization required
  - **Content-Type**: Not defined
  - **Accept**: text/plain, application/json, text/json
 
-<a name="apiV2ImagesGet"></a>
-# **apiV2ImagesGet**
-> List&lt;ImageRecord&gt; apiV2ImagesGet()
+<a name="apiImagesGet"></a>
+# **apiImagesGet**
+> List&lt;ImageRecord&gt; apiImagesGet()
 
 Retrieves a list of all images.
 
@@ -104,10 +193,10 @@ Retrieves a list of all images.
 
 ImagesApi apiInstance = new ImagesApi();
 try {
-    List<ImageRecord> result = apiInstance.apiV2ImagesGet();
+    List<ImageRecord> result = apiInstance.apiImagesGet();
     System.out.println(result);
 } catch (ApiException e) {
-    System.err.println("Exception when calling ImagesApi#apiV2ImagesGet");
+    System.err.println("Exception when calling ImagesApi#apiImagesGet");
     e.printStackTrace();
 }
 ```

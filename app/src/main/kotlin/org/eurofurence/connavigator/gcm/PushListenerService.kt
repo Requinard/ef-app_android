@@ -1,32 +1,34 @@
 package org.eurofurence.connavigator.gcm
 
+import androidx.navigation.NavDeepLinkBuilder
 import com.google.firebase.iid.FirebaseInstanceId
 import com.google.firebase.messaging.FirebaseMessaging
 import com.google.firebase.messaging.FirebaseMessagingService
 import com.google.firebase.messaging.RemoteMessage
 import org.eurofurence.connavigator.BuildConfig
-import org.eurofurence.connavigator.database.UpdateIntentService
+import org.eurofurence.connavigator.R
+import org.eurofurence.connavigator.database.dispatchUpdate
 import org.eurofurence.connavigator.pref.RemotePreferences
-import org.jetbrains.anko.*
+import org.eurofurence.connavigator.ui.fragments.FragmentViewHomeDirections
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
+import org.jetbrains.anko.info
+import org.jetbrains.anko.warn
+import java.util.*
 
 /**
  * Created by David on 14-4-2016.
  */
 class PushListenerService : FirebaseMessagingService(), AnkoLogger {
-    val factory by lazy { NotificationFactory(applicationContext) }
+    private val factory by lazy { NotificationFactory(applicationContext) }
 
     fun subscribe() {
         val messaging = FirebaseMessaging.getInstance()
 
-        var topics = listOf(
-                "live-all",
-                "live-android"
+        val topics = listOf(
+                "${BuildConfig.CONVENTION_IDENTIFIER}",
+                "${BuildConfig.CONVENTION_IDENTIFIER}-android"
         )
-
-        if (BuildConfig.DEBUG) {
-            topics += listOf("test-all", "test-android")
-        }
-
         topics.forEach { messaging.subscribeToTopic(it) }
 
         info { "Push token: " + FirebaseInstanceId.getInstance().token }
@@ -37,10 +39,9 @@ class PushListenerService : FirebaseMessagingService(), AnkoLogger {
         debug { "Message payload :" + message.data }
 
         when (message.data["Event"]) {
-            "Announcement" -> createAnnouncement(message)
-            "ImportantAnnouncement" -> createHighPriorityAnnouncement(message)
             "Sync" -> syncData(message)
             "Notification" -> createNotification(message)
+            "Announcement" -> createAnnouncement(message)
             else -> warn("Message did not contain a valid event. Abandoning!")
         }
     }
@@ -48,44 +49,61 @@ class PushListenerService : FirebaseMessagingService(), AnkoLogger {
     private fun syncData(message: RemoteMessage) {
         info { "Received request to sync data" }
 
-        applicationContext.sendBroadcast(intentFor<UpdateIntentService>())
+        dispatchUpdate(applicationContext)
         RemotePreferences.update()
+    }
+
+
+    private val RemoteMessage.title get() = data["Title"]
+
+    private val RemoteMessage.text get() = data["Text"]
+
+    private val RemoteMessage.message get() = data["Message"]
+
+    private val RemoteMessage.relatedId get() = data["RelatedId"]
+
+    private val RemoteMessage.fallbackId get() = hashCode().toString()
+
+    private val basicIntent
+        get() = NavDeepLinkBuilder(this)
+                .setGraph(R.navigation.nav_graph)
+                .setDestination(R.id.fragmentViewHome)
+                .createPendingIntent()
+
+    private fun createNotification(message: RemoteMessage) {
+        info { "Received request to create generic notification" }
+
+        factory.createBasicNotification()
+                .addRegularText(message.title ?: "No title was sent!", message.message
+                        ?: "No message was sent!")
+                .setPendingIntent(basicIntent)
+                .broadcast(message.relatedId ?: message.fallbackId)
     }
 
     private fun createAnnouncement(message: RemoteMessage) {
         info { "Received request to create announcement notification" }
 
-        val notification = factory.createBasicNotification()
+        val intent = try {
+            // Parse as a UUID so we're sure it's a uuid before making the intent
+            val id = UUID.fromString(message.relatedId)
 
-        factory.addRegularText(notification, "A new announcement from Eurofurence", message.data["Title"] ?: "")
-        factory.addBigText(notification, message.data["Text"] ?: "")
-        factory.setActivity(notification)
+            val action = FragmentViewHomeDirections
+                    .actionFragmentViewHomeToFragmentViewAnnouncement(id.toString())
 
-        factory.broadcastNotification(notification)
-    }
+            NavDeepLinkBuilder(this)
+                    .setGraph(R.navigation.nav_graph)
+                    .setDestination(R.id.fragmentViewAnnouncement)
+                    .setArguments(action.arguments)
+                    .createPendingIntent()
+        } catch (_: Exception) {
+            basicIntent
+        }
 
-    private fun createNotification(message: RemoteMessage) {
-        info { "Received request to create generic notification" }
-
-        val notification = factory.createBasicNotification()
-
-        factory.addRegularText(notification, message.data["Title"] ?: "", message.data["Message"] ?: "")
-        factory.setActivity(notification)
-
-        factory.broadcastNotification(notification)
-    }
-
-    private fun createHighPriorityAnnouncement(message: RemoteMessage) {
-        info { "Received request to make high priority announcement" }
-
-        val notification = factory.createBasicNotification()
-
-
-        factory.addRegularText(notification, message.data["Title"] ?: "", message.data["Message"] ?: "")
-        factory.addBigText(notification, message.data["Message"] ?: "")
-        factory.makeHighPriority(notification)
-        factory.setActivity(notification)
-
-        factory.broadcastNotification(notification)
+        factory.createBasicNotification()
+                .addRegularText("A new announcement from Eurofurence", message.title
+                        ?: "No title was sent!")
+                .addBigText(message.text ?: "No big text was supplied")
+                .setPendingIntent(intent)
+                .broadcast(message.relatedId ?: message.fallbackId)
     }
 }

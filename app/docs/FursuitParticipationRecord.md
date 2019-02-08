@@ -11,6 +11,7 @@ Name | Type | Description | Notes
 **tokenValue** | **String** |  |  [optional]
 **isBanned** | **Boolean** |  |  [optional]
 **tokenRegistrationDateTimeUtc** | [**Date**](Date.md) |  |  [optional]
+**lastCollectionDateTimeUtc** | [**Date**](Date.md) |  |  [optional]
 **collectionCount** | **Integer** |  |  [optional]
 
 

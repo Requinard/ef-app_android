@@ -6,7 +6,6 @@ import io.swagger.client.model.PostFcmDeviceRegistrationRequest
 import nl.komponents.kovenant.task
 import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.pref.AuthPreferences
-import org.eurofurence.connavigator.tracking.Analytics
 import org.eurofurence.connavigator.webapi.apiService
 import org.jetbrains.anko.AnkoLogger
 import org.jetbrains.anko.info
@@ -17,7 +16,7 @@ import org.jetbrains.anko.warn
  */
 class InstanceIdService : FirebaseInstanceIdService(), AnkoLogger {
     /**
-     * Checks if a user is logged in, if it is, we send a token to the appserver
+     * Checks if a user is logged in, if it is, we send a token to the app server
      */
     fun reportToken() {
         val token = FirebaseInstanceId.getInstance().token
@@ -34,15 +33,15 @@ class InstanceIdService : FirebaseInstanceIdService(), AnkoLogger {
 
         task {
             var sendTopics= listOf(
-                    "live",
                     "android",
-                    "version-${BuildConfig.VERSION_NAME}"
+                    "version-${BuildConfig.VERSION_NAME}",
+                    "cid-${BuildConfig.CONVENTION_IDENTIFIER}"
             )
 
-            if(BuildConfig.DEBUG) sendTopics += "test"
+            if(BuildConfig.DEBUG) sendTopics += "debug"
 
             info { "Making network request" }
-            apiService.pushNotifications.apiV2PushNotificationsFcmDeviceRegistrationPost(
+            apiService.pushNotifications.apiPushNotificationsFcmDeviceRegistrationPost(
                     PostFcmDeviceRegistrationRequest().apply {
                         deviceId = token
                         topics = sendTopics
@@ -54,7 +53,6 @@ class InstanceIdService : FirebaseInstanceIdService(), AnkoLogger {
         } fail {
             warn { "Token registration failed!" }
             warn { it.toString() }
-            Analytics.exception(it)
         }
     }
 

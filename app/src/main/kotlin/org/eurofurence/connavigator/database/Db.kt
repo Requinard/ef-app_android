@@ -1,9 +1,15 @@
+@file:Suppress("unused")
+
 package org.eurofurence.connavigator.database
 
 import android.content.Context
 import android.support.v4.app.Fragment
 import android.util.Log
 import com.google.firebase.perf.metrics.AddTrace
+import io.reactivex.android.schedulers.AndroidSchedulers
+import io.reactivex.disposables.Disposable
+import io.reactivex.subjects.BehaviorSubject
+import io.reactivex.subjects.Subject
 import io.swagger.client.model.*
 import org.eurofurence.connavigator.ui.filters.EventList
 import org.eurofurence.connavigator.util.v2.*
@@ -18,6 +24,7 @@ import java.util.*
  * Abstract database interface.
  */
 interface Db {
+    val observer: Subject<Db>
     /**
      * Last update time.
      */
@@ -84,6 +91,11 @@ interface Db {
     var faves: List<UUID>
 
     /**
+     * Announcement &rarr; Image join for the thumbnail.
+     */
+    val toAnnouncementImage: JoinerBinding<AnnouncementRecord, ImageRecord, UUID>
+
+    /**
      * Dealer &rarr; Image join for the thumbnail.
      */
     val toThumbnail: JoinerBinding<DealerRecord, ImageRecord, UUID>
@@ -129,6 +141,11 @@ interface Db {
     val toEvent: JoinerBinding<UUID, EventRecord, UUID>
 
     fun clear()
+
+    /**
+     * Subscribe on main thread
+     */
+    fun subscribe(function: (db: Db) -> Any): Disposable
 }
 
 /**
@@ -141,7 +158,7 @@ fun Any.locateDb(): Db =
 
         // If fragment, check if context is DB, otherwise make new root DB
             is Fragment -> context.let {
-                if (it is Db) it else RootDb(context)
+                if (it is Db) it else RootDb(context!!)
             }
 
         // Otherwise fail
@@ -156,9 +173,12 @@ fun Any.lazyLocateDb() = lazy { locateDb() }
  */
 interface HasDb : Db {
     /**
-     * Gets the actual delgate, may be implemented by [autoDb].
+     * Gets the actual delegate.
      */
     val db: Db
+
+    override val observer: Subject<Db>
+        get() = db.observer
 
     override var date: Date?
         get() = db.date
@@ -207,6 +227,9 @@ interface HasDb : Db {
     override val maps: StoredSource<MapRecord>
         get() = db.maps
 
+    override val toAnnouncementImage: JoinerBinding<AnnouncementRecord, ImageRecord, UUID>
+        get() = db.toAnnouncementImage
+
     override val toThumbnail: JoinerBinding<DealerRecord, ImageRecord, UUID>
         get() = db.toThumbnail
 
@@ -237,6 +260,9 @@ interface HasDb : Db {
     override fun clear() {
         db.clear()
     }
+
+    override fun subscribe(function: (db: Db) -> Any) = db.subscribe(function)
+
 }
 
 
@@ -244,10 +270,14 @@ interface HasDb : Db {
  * Direct database implementation.
  */
 class RootDb(context: Context) : Stored(context), Db {
+    override val observer: BehaviorSubject<Db> = BehaviorSubject.create<Db>().apply {
+        // Autopush a single event to render
+        onNext(this@RootDb)
+    }
 
     override var date by storedValue<Date>()
 
-    override var version by storedValue <String>()
+    override var version by storedValue<String>()
 
     override val announcements = storedSource(AnnouncementRecord::getId)
 
@@ -270,6 +300,11 @@ class RootDb(context: Context) : Stored(context), Db {
     override val knowledgeGroups = storedSource(KnowledgeGroupRecord::getId)
 
     override val maps = storedSource(MapRecord::getId)
+
+    override val toAnnouncementImage: JoinerBinding<AnnouncementRecord, ImageRecord, UUID>
+        get() = JoinerBinding(
+                AnnouncementRecord::getImageId join ImageRecord::getId,
+                announcements, images)
 
     override val toThumbnail = JoinerBinding(
             DealerRecord::getArtistThumbnailImageId join ImageRecord::getId,
@@ -309,19 +344,20 @@ class RootDb(context: Context) : Stored(context), Db {
 
     override fun clear() {
         date = null
-        version = null
         announcements.delete()
         dealers.delete()
         days.delete()
         rooms.delete()
         tracks.delete()
         events.delete()
-        faves = listOf()
         images.delete()
         knowledgeEntries.delete()
         knowledgeGroups.delete()
         maps.delete()
     }
+
+    override fun subscribe(function: (db: Db) -> Any): Disposable = observer.observeOn(AndroidSchedulers.mainThread())
+            .subscribe { function(it) }
 }
 
 
@@ -362,10 +398,10 @@ fun Db.eventEnd(eventEntry: EventRecord): DateTime {
     val st = LocalTime.parse(eventEntry.startTime)
     val et = LocalTime.parse(eventEntry.endTime)
 
-    if (et < st)
-        return eventDayNumber(eventEntry).plusDays(1).withTime(et)
+    return if (et < st)
+        eventDayNumber(eventEntry).plusDays(1).withTime(et)
     else
-        return eventDayNumber(eventEntry).withTime(et)
+        eventDayNumber(eventEntry).withTime(et)
 }
 
 
@@ -376,15 +412,14 @@ fun Db.eventInterval(eventEntry: EventRecord): Interval =
         Interval(eventStart(eventEntry), eventEnd(eventEntry))
 
 /**
- * You input an event and it will check it it overlaps with a favourited event
+ * You input an event and it will check it it overlaps with a favorited event
  */
 fun Db.eventIsConflicting(eventEntry: EventRecord): Boolean =
         events.items
                 .filter { it.conferenceDayId == eventEntry.conferenceDayId }
                 .filter { it.id in faves }
                 .filter { it.id != eventEntry.id }
-                .filter { eventInterval(eventEntry).overlaps(eventInterval(it)) }
-                .isNotEmpty() // If this list is bigger then 0, we have conflicting events
+                .any { eventInterval(eventEntry).overlaps(eventInterval(it)) } // If this list is bigger then 0, we have conflicting events
 
 fun Db.filterEvents() =
         EventList(this)
@@ -395,7 +430,7 @@ fun Db.filterEvents() =
  * returns 0 if before or after the event
  */
 fun Db.eventDayNumber(): Int {
-    Log.d("DB", "Calulating day of the event")
+    Log.d("DB", "Calculating day of the event")
     val firstDay = DateTime(this.days.items.first().date.time)
     val lastDay = DateTime(this.days.items.last().date.time)
 
@@ -416,24 +451,66 @@ fun Db.eventDayNumber(): Int {
  * t. retarduinard
  */
 @AddTrace(name = "Db.findLinkFragment", enabled = true)
-fun Db.findLinkFragment(target: String): Map<String, Any?> {
-    maps.items.forEach{
-        val map = it
-        it.entries.forEach {
-            val entry = it
-            it.links.forEach {
-                if(it.target.equals(target)){
-                    return mapOf(
-                            "map" to map,
-                            "entry" to entry
-                    )
-                }
-            }
-        }
+fun Db.findLinkFragment(target: String): Map<String?, Any?> {
+    for (map in maps.items) {
+        for (entry in map.entries.orEmpty())
+            if (entry.links != null)
+                for (link in entry.links.orEmpty())
+                    if (link.target == target)
+                        return mapOf(
+                                "map" to map,
+                                "entry" to entry
+                        )
     }
 
-    return mapOf(
-            "map" to null,
-            "entry" to null
-    )
+    return mapOf("map" to null, "entry" to null)
 }
+
+
+fun HasDb.glyphsFor(eventEntry: EventRecord) =
+        if (eventEntry.tags == null)
+            emptyList()
+        else
+            arrayListOf<String>().apply {
+                eventEntry.tags.orEmpty().let { tags ->
+                    if ("sponsors_only" in tags)
+                        add("{fa-star-half-o}")
+                    if ("supersponsors_only" in tags)
+                        add("{fa-star}")
+                    if ("kage" in tags) {
+                        add("{fa-bug}")
+                        add("{fa-glass}")
+                    }
+                    if ("art_show" in tags)
+                        add("{fa-photo}")
+                    if ("dealers_den" in tags)
+                        add("{fa-shopping-cart}")
+                    if ("main_stage" in tags)
+                        add("{fa-asterisk}")
+                    if ("photoshoot" in tags)
+                        add("{fa-camera}")
+                }
+            }.toList()
+
+fun HasDb.descriptionFor(eventEntry: EventRecord) =
+        if (eventEntry.tags == null)
+            emptyList()
+        else
+            arrayListOf<String>().apply {
+                eventEntry.tags.orEmpty().let { tags ->
+                    if ("sponsors_only" in tags)
+                        add("{fa-star-half-o} Admittance for Sponsors and Super-Sponsors only")
+                    if ("supersponsors_only" in tags)
+                        add("{fa-star} Admittance for Super-Sponsors only")
+                    if ("kage" in tags)
+                        add("{fa-bug} {fa-glass} May contain traces of cockroach and wine")
+                    if ("art_show" in tags)
+                        add("{fa-photo} Art Show")
+                    if ("dealers_den" in tags)
+                        add("{fa-shopping-cart} Dealers Den")
+                    if ("main_stage" in tags)
+                        add("{fa-asterisk} Main Stage Event")
+                    if ("photoshoot" in tags)
+                        add("{fa-camera} Photoshoot")
+                }
+            }.toList()

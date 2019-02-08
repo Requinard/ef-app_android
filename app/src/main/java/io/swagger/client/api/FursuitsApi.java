@@ -36,7 +36,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class FursuitsApi {
-  String basePath = "https://localhost/";
+  String basePath = "https://localhost";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -61,18 +61,18 @@ public class FursuitsApi {
    * @param id \&quot;Id\&quot; of the fursuit badge
    * @return byte[]
   */
-  public byte[] apiV2FursuitsBadgesByIdImageGet (UUID id) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public byte[] apiFursuitsBadgesByIdImageGet (UUID id) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
       // verify the required parameter 'id' is set
       if (id == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'id' when calling apiV2FursuitsBadgesByIdImageGet",
-      new ApiException(400, "Missing the required parameter 'id' when calling apiV2FursuitsBadgesByIdImageGet"));
+      VolleyError error = new VolleyError("Missing the required parameter 'id' when calling apiFursuitsBadgesByIdImageGet",
+      new ApiException(400, "Missing the required parameter 'id' when calling apiFursuitsBadgesByIdImageGet"));
       }
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/Badges/{Id}/Image".replaceAll("\\{format\\}","json").replaceAll("\\{" + "Id" + "\\}", apiInvoker.escapeString(id.toString()));
+  String path = "/Api/Fursuits/Badges/{Id}/Image".replaceAll("\\{format\\}","json").replaceAll("\\{" + "Id" + "\\}", apiInvoker.escapeString(id.toString()));
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -130,19 +130,19 @@ public class FursuitsApi {
    * 
    * @param id \&quot;Id\&quot; of the fursuit badge
   */
-  public void apiV2FursuitsBadgesByIdImageGet (UUID id, final Response.Listener<byte[]> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsBadgesByIdImageGet (UUID id, final Response.Listener<byte[]> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
     // verify the required parameter 'id' is set
     if (id == null) {
-       VolleyError error = new VolleyError("Missing the required parameter 'id' when calling apiV2FursuitsBadgesByIdImageGet",
-         new ApiException(400, "Missing the required parameter 'id' when calling apiV2FursuitsBadgesByIdImageGet"));
+       VolleyError error = new VolleyError("Missing the required parameter 'id' when calling apiFursuitsBadgesByIdImageGet",
+         new ApiException(400, "Missing the required parameter 'id' when calling apiFursuitsBadgesByIdImageGet"));
     }
     
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/Badges/{Id}/Image".replaceAll("\\{format\\}","json").replaceAll("\\{" + "Id" + "\\}", apiInvoker.escapeString(id.toString()));
+    String path = "/Api/Fursuits/Badges/{Id}/Image".replaceAll("\\{format\\}","json").replaceAll("\\{" + "Id" + "\\}", apiInvoker.escapeString(id.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -197,12 +197,12 @@ public class FursuitsApi {
   *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;FursuitBadgeSystem&#x60;**, **&#x60;System&#x60;**  **Not meant to be consumed by the mobile apps**
    * @return List<FursuitBadgeRecord>
   */
-  public List<FursuitBadgeRecord> apiV2FursuitsBadgesGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<FursuitBadgeRecord> apiFursuitsBadgesGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/Badges".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/Badges".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -260,13 +260,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;FursuitBadgeSystem&#x60;**, **&#x60;System&#x60;**  **Not meant to be consumed by the mobile apps**
 
   */
-  public void apiV2FursuitsBadgesGet (final Response.Listener<List<FursuitBadgeRecord>> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsBadgesGet (final Response.Listener<List<FursuitBadgeRecord>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/Badges".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/Badges".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -322,12 +322,12 @@ public class FursuitsApi {
    * @param registration 
    * @return void
   */
-  public void apiV2FursuitsBadgesRegistrationPost (FursuitBadgeRegistration registration) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiFursuitsBadgesRegistrationPost (FursuitBadgeRegistration registration) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = registration;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/Badges/Registration".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/Badges/Registration".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -339,7 +339,7 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -385,13 +385,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;FursuitBadgeSystem&#x60;**, **&#x60;System&#x60;**  This is used by the fursuit badge system to push badge information to this backend.  **Not meant to be consumed by the mobile apps**
    * @param registration 
   */
-  public void apiV2FursuitsBadgesRegistrationPost (FursuitBadgeRegistration registration, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsBadgesRegistrationPost (FursuitBadgeRegistration registration, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = registration;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/Badges/Registration".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/Badges/Registration".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -403,7 +403,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -442,12 +442,12 @@ public class FursuitsApi {
   *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @return List<FursuitParticipationInfo>
   */
-  public List<FursuitParticipationInfo> apiV2FursuitsCollectingGameFursuitParticipationGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<FursuitParticipationInfo> apiFursuitsCollectingGameFursuitParticipationGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticipation".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/FursuitParticipation".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -505,13 +505,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
 
   */
-  public void apiV2FursuitsCollectingGameFursuitParticipationGet (final Response.Listener<List<FursuitParticipationInfo>> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGameFursuitParticipationGet (final Response.Listener<List<FursuitParticipationInfo>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticipation".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/FursuitParticipation".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -567,12 +567,12 @@ public class FursuitsApi {
    * @param top 
    * @return List<FursuitScoreboardEntry>
   */
-  public List<FursuitScoreboardEntry> apiV2FursuitsCollectingGameFursuitParticipationScoreboardGet (Integer top) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<FursuitScoreboardEntry> apiFursuitsCollectingGameFursuitParticipationScoreboardGet (Integer top) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticipation/Scoreboard".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/FursuitParticipation/Scoreboard".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -631,13 +631,13 @@ public class FursuitsApi {
    * 
    * @param top 
   */
-  public void apiV2FursuitsCollectingGameFursuitParticipationScoreboardGet (Integer top, final Response.Listener<List<FursuitScoreboardEntry>> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGameFursuitParticipationScoreboardGet (Integer top, final Response.Listener<List<FursuitScoreboardEntry>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticipation/Scoreboard".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/FursuitParticipation/Scoreboard".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -695,18 +695,18 @@ public class FursuitsApi {
    * @param tokenValue 
    * @return void
   */
-  public void apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost (UUID fursuitBadgeId, String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost (UUID fursuitBadgeId, String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = tokenValue;
   
       // verify the required parameter 'fursuitBadgeId' is set
       if (fursuitBadgeId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost",
-      new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost"));
+      VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost",
+      new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost"));
       }
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
+  String path = "/Api/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -718,7 +718,7 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -764,19 +764,19 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @param fursuitBadgeId    * @param tokenValue 
   */
-  public void apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost (UUID fursuitBadgeId, String tokenValue, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost (UUID fursuitBadgeId, String tokenValue, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = tokenValue;
 
   
     // verify the required parameter 'fursuitBadgeId' is set
     if (fursuitBadgeId == null) {
-       VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost",
-         new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost"));
+       VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost",
+         new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenPost"));
     }
     
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
+    String path = "/Api/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -788,7 +788,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -829,18 +829,18 @@ public class FursuitsApi {
    * @param tokenValue 
    * @return ApiSafeResult
   */
-  public ApiSafeResult apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost (UUID fursuitBadgeId, String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public ApiSafeResult apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost (UUID fursuitBadgeId, String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = tokenValue;
   
       // verify the required parameter 'fursuitBadgeId' is set
       if (fursuitBadgeId == null) {
-      VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost",
-      new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost"));
+      VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost",
+      new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost"));
       }
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token:safe".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
+  String path = "/Api/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token:safe".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -852,7 +852,7 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -898,19 +898,19 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @param fursuitBadgeId    * @param tokenValue 
   */
-  public void apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost (UUID fursuitBadgeId, String tokenValue, final Response.Listener<ApiSafeResult> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost (UUID fursuitBadgeId, String tokenValue, final Response.Listener<ApiSafeResult> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = tokenValue;
 
   
     // verify the required parameter 'fursuitBadgeId' is set
     if (fursuitBadgeId == null) {
-       VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost",
-         new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiV2FursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost"));
+       VolleyError error = new VolleyError("Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost",
+         new ApiException(400, "Missing the required parameter 'fursuitBadgeId' when calling apiFursuitsCollectingGameFursuitParticpationBadgesByFursuitBadgeIdTokenSafePost"));
     }
     
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token:safe".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
+    String path = "/Api/Fursuits/CollectingGame/FursuitParticpation/Badges/{FursuitBadgeId}/Token:safe".replaceAll("\\{format\\}","json").replaceAll("\\{" + "FursuitBadgeId" + "\\}", apiInvoker.escapeString(fursuitBadgeId.toString()));
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -922,7 +922,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -966,12 +966,12 @@ public class FursuitsApi {
    * @param tokenValue 
    * @return CollectTokenResponse
   */
-  public CollectTokenResponse apiV2FursuitsCollectingGamePlayerParticipationCollectTokenPost (String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public CollectTokenResponse apiFursuitsCollectingGamePlayerParticipationCollectTokenPost (String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = tokenValue;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/CollectToken".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/CollectToken".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -983,7 +983,7 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1029,13 +1029,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @param tokenValue 
   */
-  public void apiV2FursuitsCollectingGamePlayerParticipationCollectTokenPost (String tokenValue, final Response.Listener<CollectTokenResponse> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGamePlayerParticipationCollectTokenPost (String tokenValue, final Response.Listener<CollectTokenResponse> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = tokenValue;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/CollectToken".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/CollectToken".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1047,7 +1047,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1091,12 +1091,12 @@ public class FursuitsApi {
    * @param tokenValue 
    * @return ApiSafeResultCollectTokenResponse
   */
-  public ApiSafeResultCollectTokenResponse apiV2FursuitsCollectingGamePlayerParticipationCollectTokenSafePost (String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public ApiSafeResultCollectTokenResponse apiFursuitsCollectingGamePlayerParticipationCollectTokenSafePost (String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = tokenValue;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/CollectToken:safe".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/CollectToken:safe".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -1108,7 +1108,7 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1154,13 +1154,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @param tokenValue 
   */
-  public void apiV2FursuitsCollectingGamePlayerParticipationCollectTokenSafePost (String tokenValue, final Response.Listener<ApiSafeResultCollectTokenResponse> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGamePlayerParticipationCollectTokenSafePost (String tokenValue, final Response.Listener<ApiSafeResultCollectTokenResponse> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = tokenValue;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/CollectToken:safe".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/CollectToken:safe".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1172,7 +1172,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1215,12 +1215,12 @@ public class FursuitsApi {
   *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @return List<PlayerCollectionEntry>
   */
-  public List<PlayerCollectionEntry> apiV2FursuitsCollectingGamePlayerParticipationCollectionEntriesGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<PlayerCollectionEntry> apiFursuitsCollectingGamePlayerParticipationCollectionEntriesGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/CollectionEntries".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/CollectionEntries".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -1278,13 +1278,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
 
   */
-  public void apiV2FursuitsCollectingGamePlayerParticipationCollectionEntriesGet (final Response.Listener<List<PlayerCollectionEntry>> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGamePlayerParticipationCollectionEntriesGet (final Response.Listener<List<PlayerCollectionEntry>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/CollectionEntries".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/CollectionEntries".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1339,12 +1339,12 @@ public class FursuitsApi {
   *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
    * @return PlayerParticipationInfo
   */
-  public PlayerParticipationInfo apiV2FursuitsCollectingGamePlayerParticipationGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public PlayerParticipationInfo apiFursuitsCollectingGamePlayerParticipationGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/PlayerParticipation".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -1402,13 +1402,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**
 
   */
-  public void apiV2FursuitsCollectingGamePlayerParticipationGet (final Response.Listener<PlayerParticipationInfo> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGamePlayerParticipationGet (final Response.Listener<PlayerParticipationInfo> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/PlayerParticipation".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1464,12 +1464,12 @@ public class FursuitsApi {
    * @param top 
    * @return List<PlayerScoreboardEntry>
   */
-  public List<PlayerScoreboardEntry> apiV2FursuitsCollectingGamePlayerParticipationScoreboardGet (Integer top) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<PlayerScoreboardEntry> apiFursuitsCollectingGamePlayerParticipationScoreboardGet (Integer top) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/Scoreboard".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/Scoreboard".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -1528,13 +1528,13 @@ public class FursuitsApi {
    * 
    * @param top 
   */
-  public void apiV2FursuitsCollectingGamePlayerParticipationScoreboardGet (Integer top, final Response.Listener<List<PlayerScoreboardEntry>> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGamePlayerParticipationScoreboardGet (Integer top, final Response.Listener<List<PlayerScoreboardEntry>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/PlayerParticipation/Scoreboard".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/PlayerParticipation/Scoreboard".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1588,15 +1588,14 @@ public class FursuitsApi {
   /**
   * 
   *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
-   * @param tokenValues 
    * @return void
   */
-  public void apiV2FursuitsCollectingGameTokensBatchPost (List<String> tokenValues) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
-     Object postBody = tokenValues;
+  public void apiFursuitsCollectingGameRecalculatePost () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+     Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/Tokens/Batch".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/Recalculate".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -1608,7 +1607,128 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  
+      };
+      String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+
+      if (contentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+  
+
+      HttpEntity httpEntity = localVarBuilder.build();
+      postBody = httpEntity;
+      } else {
+      // normal form params
+        }
+
+      String[] authNames = new String[] { "Bearer" };
+
+      try {
+        String localVarResponse = apiInvoker.invokeAPI (basePath, path, "POST", queryParams, postBody, headerParams, formParams, contentType, authNames);
+        if(localVarResponse != null){
+           return ;
+        } else {
+           return ;
+        }
+      } catch (ApiException ex) {
+         throw ex;
+      } catch (InterruptedException ex) {
+         throw ex;
+      } catch (ExecutionException ex) {
+         if(ex.getCause() instanceof VolleyError) {
+	    VolleyError volleyError = (VolleyError)ex.getCause();
+	    if (volleyError.networkResponse != null) {
+	       throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+	    }
+         }
+         throw ex;
+      } catch (TimeoutException ex) {
+         throw ex;
+      }
+  }
+
+      /**
+   * 
+   *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
+
+  */
+  public void apiFursuitsCollectingGameRecalculatePost (final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+    Object postBody = null;
+
+  
+
+    // create path and map variables
+    String path = "/Api/Fursuits/CollectingGame/Recalculate".replaceAll("\\{format\\}","json");
+
+    // query params
+    List<Pair> queryParams = new ArrayList<Pair>();
+    // header params
+    Map<String, String> headerParams = new HashMap<String, String>();
+    // form params
+    Map<String, String> formParams = new HashMap<String, String>();
+
+
+
+    String[] contentTypes = {
+      
+    };
+    String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+
+    if (contentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+      
+
+      HttpEntity httpEntity = localVarBuilder.build();
+      postBody = httpEntity;
+    } else {
+      // normal form params
+          }
+
+      String[] authNames = new String[] { "Bearer" };
+
+    try {
+      apiInvoker.invokeAPI(basePath, path, "POST", queryParams, postBody, headerParams, formParams, contentType, authNames,
+        new Response.Listener<String>() {
+          @Override
+          public void onResponse(String localVarResponse) {
+              responseListener.onResponse(localVarResponse);
+          }
+      }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            errorListener.onErrorResponse(error);
+          }
+      });
+    } catch (ApiException ex) {
+      errorListener.onErrorResponse(new VolleyError(ex));
+    }
+  }
+  /**
+  * 
+  *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
+   * @param tokenValues 
+   * @return void
+  */
+  public void apiFursuitsCollectingGameTokensBatchPost (List<String> tokenValues) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+     Object postBody = tokenValues;
+  
+
+  // create path and map variables
+  String path = "/Api/Fursuits/CollectingGame/Tokens/Batch".replaceAll("\\{format\\}","json");
+
+  // query params
+  List<Pair> queryParams = new ArrayList<Pair>();
+      // header params
+      Map<String, String> headerParams = new HashMap<String, String>();
+      // form params
+      Map<String, String> formParams = new HashMap<String, String>();
+
+
+
+      String[] contentTypes = {
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1654,13 +1774,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
    * @param tokenValues 
   */
-  public void apiV2FursuitsCollectingGameTokensBatchPost (List<String> tokenValues, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGameTokensBatchPost (List<String> tokenValues, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = tokenValues;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/Tokens/Batch".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/Tokens/Batch".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1672,7 +1792,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1712,12 +1832,12 @@ public class FursuitsApi {
    * @param tokenValue 
    * @return void
   */
-  public void apiV2FursuitsCollectingGameTokensPost (String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiFursuitsCollectingGameTokensPost (String tokenValue) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = tokenValue;
   
 
   // create path and map variables
-  String path = "/Api/v2/Fursuits/CollectingGame/Tokens".replaceAll("\\{format\\}","json");
+  String path = "/Api/Fursuits/CollectingGame/Tokens".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -1729,7 +1849,7 @@ public class FursuitsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -1775,13 +1895,13 @@ public class FursuitsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
    * @param tokenValue 
   */
-  public void apiV2FursuitsCollectingGameTokensPost (String tokenValue, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiFursuitsCollectingGameTokensPost (String tokenValue, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = tokenValue;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Fursuits/CollectingGame/Tokens".replaceAll("\\{format\\}","json");
+    String path = "/Api/Fursuits/CollectingGame/Tokens".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -1793,7 +1913,7 @@ public class FursuitsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 

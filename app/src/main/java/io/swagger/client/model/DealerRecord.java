@@ -9,7 +9,10 @@ import io.swagger.annotations.*;
 import com.google.gson.annotations.SerializedName;
 
 
-@ApiModel(description = "")
+/**
+ * This record represents a &#39;dealer&#39; that is offering goods/services at the dealers den.  All dealers are represented and registered by participating attendees.    Properties marked with **(pba)** indicate that its value or the content referenced  by it is provided directly by the attendee during or after dealer registration.
+ **/
+@ApiModel(description = "This record represents a 'dealer' that is offering goods/services at the dealers den.  All dealers are represented and registered by participating attendees.    Properties marked with **(pba)** indicate that its value or the content referenced  by it is provided directly by the attendee during or after dealer registration.")
 public class DealerRecord  {
   
   @SerializedName("LastChangeDateTimeUtc")
@@ -50,6 +53,10 @@ public class DealerRecord  {
   private UUID artistImageId = null;
   @SerializedName("ArtPreviewImageId")
   private UUID artPreviewImageId = null;
+  @SerializedName("IsAfterDark")
+  private Boolean isAfterDark = null;
+  @SerializedName("Categories")
+  private List<String> categories = null;
 
   /**
    **/
@@ -72,8 +79,9 @@ public class DealerRecord  {
   }
 
   /**
+   * Registration number (as on badge) of the attendee that acts on behalf/represents this dealer.
    **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(required = true, value = "Registration number (as on badge) of the attendee that acts on behalf/represents this dealer.")
   public Integer getRegistrationNumber() {
     return registrationNumber;
   }
@@ -82,8 +90,9 @@ public class DealerRecord  {
   }
 
   /**
+   * Nickname number (as on badge) of the attendee that acts on behalf/represents this dealer.
    **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(required = true, value = "Nickname number (as on badge) of the attendee that acts on behalf/represents this dealer.")
   public String getAttendeeNickname() {
     return attendeeNickname;
   }
@@ -92,8 +101,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Name under which this dealer is acting, e.G. name of the company or brand.
    **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(required = true, value = "**(pba)** Name under which this dealer is acting, e.G. name of the company or brand.")
   public String getDisplayName() {
     return displayName;
   }
@@ -102,8 +112,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Brief description of merchandise/services offered.
    **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(required = true, value = "**(pba)** Brief description of merchandise/services offered.")
   public String getMerchandise() {
     return merchandise;
   }
@@ -112,8 +123,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Short description/personal introduction about the dealer.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** Short description/personal introduction about the dealer.")
   public String getShortDescription() {
     return shortDescription;
   }
@@ -122,8 +134,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Variable length, bio of the artist/dealer.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** Variable length, bio of the artist/dealer.")
   public String getAboutTheArtistText() {
     return aboutTheArtistText;
   }
@@ -132,8 +145,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Variable length, description of the art/goods/services sold.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** Variable length, description of the art/goods/services sold.")
   public String getAboutTheArtText() {
     return aboutTheArtText;
   }
@@ -142,8 +156,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Link fragments to external website(s) of the dealer.
    **/
-  @ApiModelProperty(required = true, value = "")
+  @ApiModelProperty(required = true, value = "**(pba)** Link fragments to external website(s) of the dealer.")
   public List<LinkFragment> getLinks() {
     return links;
   }
@@ -152,8 +167,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Twitter handle of the dealer.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** Twitter handle of the dealer.")
   public String getTwitterHandle() {
     return twitterHandle;
   }
@@ -162,8 +178,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Telegram handle of the dealer.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** Telegram handle of the dealer.")
   public String getTelegramHandle() {
     return telegramHandle;
   }
@@ -172,8 +189,9 @@ public class DealerRecord  {
   }
 
   /**
+   * Flag indicating whether the dealer is present at the dealers den on thursday.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Flag indicating whether the dealer is present at the dealers den on thursday.")
   public Boolean getAttendsOnThursday() {
     return attendsOnThursday;
   }
@@ -182,8 +200,9 @@ public class DealerRecord  {
   }
 
   /**
+   * Flag indicating whether the dealer is present at the dealers den on friday.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Flag indicating whether the dealer is present at the dealers den on friday.")
   public Boolean getAttendsOnFriday() {
     return attendsOnFriday;
   }
@@ -192,8 +211,9 @@ public class DealerRecord  {
   }
 
   /**
+   * Flag indicating whether the dealer is present at the dealers den on saturday.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "Flag indicating whether the dealer is present at the dealers den on saturday.")
   public Boolean getAttendsOnSaturday() {
     return attendsOnSaturday;
   }
@@ -202,8 +222,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** Variable length, caption/subtext that describes the 'art preview' image.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** Variable length, caption/subtext that describes the 'art preview' image.")
   public String getArtPreviewCaption() {
     return artPreviewCaption;
   }
@@ -212,8 +233,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** ImageId of the thumbnail image (square) that represents the dealer.  Used whenever multiple dealers are listed or a small, squared icon is needed.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** ImageId of the thumbnail image (square) that represents the dealer.  Used whenever multiple dealers are listed or a small, squared icon is needed.")
   public UUID getArtistThumbnailImageId() {
     return artistThumbnailImageId;
   }
@@ -222,8 +244,9 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** ImageId of the artist image (any aspect ratio) that represents the dealer.  Usually a personal photo / logo / badge, or a high-res version of the thumbnail image.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** ImageId of the artist image (any aspect ratio) that represents the dealer.  Usually a personal photo / logo / badge, or a high-res version of the thumbnail image.")
   public UUID getArtistImageId() {
     return artistImageId;
   }
@@ -232,13 +255,36 @@ public class DealerRecord  {
   }
 
   /**
+   * **(pba)** ImageId of an art/merchandise sample sold/offered by the dealer.
    **/
-  @ApiModelProperty(value = "")
+  @ApiModelProperty(value = "**(pba)** ImageId of an art/merchandise sample sold/offered by the dealer.")
   public UUID getArtPreviewImageId() {
     return artPreviewImageId;
   }
   public void setArtPreviewImageId(UUID artPreviewImageId) {
     this.artPreviewImageId = artPreviewImageId;
+  }
+
+  /**
+   * Flag indicating whether the dealer is located at the after dark dealers den.
+   **/
+  @ApiModelProperty(value = "Flag indicating whether the dealer is located at the after dark dealers den.")
+  public Boolean getIsAfterDark() {
+    return isAfterDark;
+  }
+  public void setIsAfterDark(Boolean isAfterDark) {
+    this.isAfterDark = isAfterDark;
+  }
+
+  /**
+   * **(pba)** List of standardized categories that apply to the goods/services sold/offered by the dealer.
+   **/
+  @ApiModelProperty(value = "**(pba)** List of standardized categories that apply to the goods/services sold/offered by the dealer.")
+  public List<String> getCategories() {
+    return categories;
+  }
+  public void setCategories(List<String> categories) {
+    this.categories = categories;
   }
 
 
@@ -269,7 +315,9 @@ public class DealerRecord  {
         (artPreviewCaption == null ? dealerRecord.artPreviewCaption == null : artPreviewCaption.equals(dealerRecord.artPreviewCaption)) &&
         (artistThumbnailImageId == null ? dealerRecord.artistThumbnailImageId == null : artistThumbnailImageId.equals(dealerRecord.artistThumbnailImageId)) &&
         (artistImageId == null ? dealerRecord.artistImageId == null : artistImageId.equals(dealerRecord.artistImageId)) &&
-        (artPreviewImageId == null ? dealerRecord.artPreviewImageId == null : artPreviewImageId.equals(dealerRecord.artPreviewImageId));
+        (artPreviewImageId == null ? dealerRecord.artPreviewImageId == null : artPreviewImageId.equals(dealerRecord.artPreviewImageId)) &&
+        (isAfterDark == null ? dealerRecord.isAfterDark == null : isAfterDark.equals(dealerRecord.isAfterDark)) &&
+        (categories == null ? dealerRecord.categories == null : categories.equals(dealerRecord.categories));
   }
 
   @Override 
@@ -294,6 +342,8 @@ public class DealerRecord  {
     result = 31 * result + (artistThumbnailImageId == null ? 0: artistThumbnailImageId.hashCode());
     result = 31 * result + (artistImageId == null ? 0: artistImageId.hashCode());
     result = 31 * result + (artPreviewImageId == null ? 0: artPreviewImageId.hashCode());
+    result = 31 * result + (isAfterDark == null ? 0: isAfterDark.hashCode());
+    result = 31 * result + (categories == null ? 0: categories.hashCode());
     return result;
   }
 
@@ -321,6 +371,8 @@ public class DealerRecord  {
     sb.append("  artistThumbnailImageId: ").append(artistThumbnailImageId).append("\n");
     sb.append("  artistImageId: ").append(artistImageId).append("\n");
     sb.append("  artPreviewImageId: ").append(artPreviewImageId).append("\n");
+    sb.append("  isAfterDark: ").append(isAfterDark).append("\n");
+    sb.append("  categories: ").append(categories).append("\n");
     sb.append("}\n");
     return sb.toString();
   }

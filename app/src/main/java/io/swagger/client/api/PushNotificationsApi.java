@@ -12,6 +12,8 @@ import com.android.volley.Response;
 import com.android.volley.VolleyError;
 
 import io.swagger.client.model.PostFcmDeviceRegistrationRequest;
+import io.swagger.client.model.PushNotificationChannelStatistics;
+import java.util.Date;
 import io.swagger.client.model.PostWnsChannelRegistrationRequest;
 import io.swagger.client.model.ToastTest;
 
@@ -26,7 +28,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class PushNotificationsApi {
-  String basePath = "https://localhost/";
+  String basePath = "https://localhost";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -51,12 +53,12 @@ public class PushNotificationsApi {
    * @param request 
    * @return void
   */
-  public void apiV2PushNotificationsFcmDeviceRegistrationPost (PostFcmDeviceRegistrationRequest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiPushNotificationsFcmDeviceRegistrationPost (PostFcmDeviceRegistrationRequest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = request;
   
 
   // create path and map variables
-  String path = "/Api/v2/PushNotifications/FcmDeviceRegistration".replaceAll("\\{format\\}","json");
+  String path = "/Api/PushNotifications/FcmDeviceRegistration".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -68,7 +70,7 @@ public class PushNotificationsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -114,13 +116,13 @@ public class PushNotificationsApi {
    * 
    * @param request 
   */
-  public void apiV2PushNotificationsFcmDeviceRegistrationPost (PostFcmDeviceRegistrationRequest request, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiPushNotificationsFcmDeviceRegistrationPost (PostFcmDeviceRegistrationRequest request, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = request;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/PushNotifications/FcmDeviceRegistration".replaceAll("\\{format\\}","json");
+    String path = "/Api/PushNotifications/FcmDeviceRegistration".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -132,7 +134,7 @@ public class PushNotificationsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -168,15 +170,142 @@ public class PushNotificationsApi {
   }
   /**
   * 
-  *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
-   * @return void
+  *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**
+   * @param since 
+   * @return PushNotificationChannelStatistics
   */
-  public void apiV2PushNotificationsSyncRequestPost () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public PushNotificationChannelStatistics apiPushNotificationsStatisticsGet (Date since) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/PushNotifications/SyncRequest".replaceAll("\\{format\\}","json");
+  String path = "/Api/PushNotifications/Statistics".replaceAll("\\{format\\}","json");
+
+  // query params
+  List<Pair> queryParams = new ArrayList<Pair>();
+      // header params
+      Map<String, String> headerParams = new HashMap<String, String>();
+      // form params
+      Map<String, String> formParams = new HashMap<String, String>();
+
+          queryParams.addAll(ApiInvoker.parameterToPairs("", "Since", since));
+
+
+      String[] contentTypes = {
+  
+      };
+      String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+
+      if (contentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+  
+
+      HttpEntity httpEntity = localVarBuilder.build();
+      postBody = httpEntity;
+      } else {
+      // normal form params
+        }
+
+      String[] authNames = new String[] { "Bearer" };
+
+      try {
+        String localVarResponse = apiInvoker.invokeAPI (basePath, path, "GET", queryParams, postBody, headerParams, formParams, contentType, authNames);
+        if(localVarResponse != null){
+           return (PushNotificationChannelStatistics) ApiInvoker.deserialize(localVarResponse, "", PushNotificationChannelStatistics.class);
+        } else {
+           return null;
+        }
+      } catch (ApiException ex) {
+         throw ex;
+      } catch (InterruptedException ex) {
+         throw ex;
+      } catch (ExecutionException ex) {
+         if(ex.getCause() instanceof VolleyError) {
+	    VolleyError volleyError = (VolleyError)ex.getCause();
+	    if (volleyError.networkResponse != null) {
+	       throw new ApiException(volleyError.networkResponse.statusCode, volleyError.getMessage());
+	    }
+         }
+         throw ex;
+      } catch (TimeoutException ex) {
+         throw ex;
+      }
+  }
+
+      /**
+   * 
+   *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**
+   * @param since 
+  */
+  public void apiPushNotificationsStatisticsGet (Date since, final Response.Listener<PushNotificationChannelStatistics> responseListener, final Response.ErrorListener errorListener) {
+    Object postBody = null;
+
+  
+
+    // create path and map variables
+    String path = "/Api/PushNotifications/Statistics".replaceAll("\\{format\\}","json");
+
+    // query params
+    List<Pair> queryParams = new ArrayList<Pair>();
+    // header params
+    Map<String, String> headerParams = new HashMap<String, String>();
+    // form params
+    Map<String, String> formParams = new HashMap<String, String>();
+
+    queryParams.addAll(ApiInvoker.parameterToPairs("", "Since", since));
+
+
+    String[] contentTypes = {
+      
+    };
+    String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
+
+    if (contentType.startsWith("multipart/form-data")) {
+      // file uploading
+      MultipartEntityBuilder localVarBuilder = MultipartEntityBuilder.create();
+      
+
+      HttpEntity httpEntity = localVarBuilder.build();
+      postBody = httpEntity;
+    } else {
+      // normal form params
+          }
+
+      String[] authNames = new String[] { "Bearer" };
+
+    try {
+      apiInvoker.invokeAPI(basePath, path, "GET", queryParams, postBody, headerParams, formParams, contentType, authNames,
+        new Response.Listener<String>() {
+          @Override
+          public void onResponse(String localVarResponse) {
+            try {
+              responseListener.onResponse((PushNotificationChannelStatistics) ApiInvoker.deserialize(localVarResponse,  "", PushNotificationChannelStatistics.class));
+            } catch (ApiException exception) {
+               errorListener.onErrorResponse(new VolleyError(exception));
+            }
+          }
+      }, new Response.ErrorListener() {
+          @Override
+          public void onErrorResponse(VolleyError error) {
+            errorListener.onErrorResponse(error);
+          }
+      });
+    } catch (ApiException ex) {
+      errorListener.onErrorResponse(new VolleyError(ex));
+    }
+  }
+  /**
+  * 
+  *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
+   * @return void
+  */
+  public void apiPushNotificationsSyncRequestPost () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+     Object postBody = null;
+  
+
+  // create path and map variables
+  String path = "/Api/PushNotifications/SyncRequest".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -234,13 +363,13 @@ public class PushNotificationsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
 
   */
-  public void apiV2PushNotificationsSyncRequestPost (final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiPushNotificationsSyncRequestPost (final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/PushNotifications/SyncRequest".replaceAll("\\{format\\}","json");
+    String path = "/Api/PushNotifications/SyncRequest".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -292,12 +421,12 @@ public class PushNotificationsApi {
    * @param request 
    * @return void
   */
-  public void apiV2PushNotificationsWnsChannelRegistrationPost (PostWnsChannelRegistrationRequest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiPushNotificationsWnsChannelRegistrationPost (PostWnsChannelRegistrationRequest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = request;
   
 
   // create path and map variables
-  String path = "/Api/v2/PushNotifications/WnsChannelRegistration".replaceAll("\\{format\\}","json");
+  String path = "/Api/PushNotifications/WnsChannelRegistration".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -309,7 +438,7 @@ public class PushNotificationsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -355,13 +484,13 @@ public class PushNotificationsApi {
    * 
    * @param request 
   */
-  public void apiV2PushNotificationsWnsChannelRegistrationPost (PostWnsChannelRegistrationRequest request, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiPushNotificationsWnsChannelRegistrationPost (PostWnsChannelRegistrationRequest request, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = request;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/PushNotifications/WnsChannelRegistration".replaceAll("\\{format\\}","json");
+    String path = "/Api/PushNotifications/WnsChannelRegistration".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -373,7 +502,7 @@ public class PushNotificationsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -413,12 +542,12 @@ public class PushNotificationsApi {
    * @param request 
    * @return void
   */
-  public void apiV2PushNotificationsWnsToastPost (ToastTest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiPushNotificationsWnsToastPost (ToastTest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = request;
   
 
   // create path and map variables
-  String path = "/Api/v2/PushNotifications/WnsToast".replaceAll("\\{format\\}","json");
+  String path = "/Api/PushNotifications/WnsToast".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -430,7 +559,7 @@ public class PushNotificationsApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -476,13 +605,13 @@ public class PushNotificationsApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Developer&#x60;**
    * @param request 
   */
-  public void apiV2PushNotificationsWnsToastPost (ToastTest request, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiPushNotificationsWnsToastPost (ToastTest request, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = request;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/PushNotifications/WnsToast".replaceAll("\\{format\\}","json");
+    String path = "/Api/PushNotifications/WnsToast".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -494,7 +623,7 @@ public class PushNotificationsApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 

@@ -1,76 +1,94 @@
 package org.eurofurence.connavigator.database
 
-import android.app.AlarmManager
 import android.app.IntentService
-import android.app.PendingIntent
 import android.content.Context
 import android.content.Intent
 import android.support.v4.content.LocalBroadcastManager
-import android.util.Log
-import org.eurofurence.connavigator.gcm.NotificationFactory
+import kotlinx.serialization.ImplicitReflectionSerializer
+import org.eurofurence.connavigator.BuildConfig
+import org.eurofurence.connavigator.broadcast.EventFavoriteBroadcast
 import org.eurofurence.connavigator.net.imageService
 import org.eurofurence.connavigator.pref.DebugPreferences
-import org.eurofurence.connavigator.ui.ActivityRoot
-import org.eurofurence.connavigator.util.extensions.*
+import org.eurofurence.connavigator.pref.RemotePreferences
+import org.eurofurence.connavigator.util.extensions.booleans
+import org.eurofurence.connavigator.util.extensions.catchAlternative
+import org.eurofurence.connavigator.util.extensions.objects
+import org.eurofurence.connavigator.util.extensions.toIntent
 import org.eurofurence.connavigator.util.v2.convert
 import org.eurofurence.connavigator.util.v2.internalSpec
 import org.eurofurence.connavigator.webapi.apiService
+import org.jetbrains.anko.*
 import org.joda.time.DateTime
 import java.util.*
-import kotlin.serialization.Serializable
+import kotlinx.serialization.Serializable
+import org.eurofurence.connavigator.util.v2.DateSerializer
 
 @Serializable
-data class UpdateComplete(val success: Boolean, val time: Date?, val exception: Throwable?)
+data class UpdateComplete(val success: Boolean,
+                          @Serializable(with = DateSerializer::class)
+                          val time: Date?, val exception: Throwable?)
 
+@ImplicitReflectionSerializer
 val updateComplete = internalSpec<UpdateComplete>()
+
+/**
+ * Dispatches an update
+ * @param context The host context for the service
+ */
+fun AnkoLogger.dispatchUpdate(context: Context, showToastOnCompletion: Boolean = false) {
+    info { "Dispatching update" }
+
+    val intent = Intent(context, UpdateIntentService::class.java)
+    intent.putExtra("showToastOnCompletion", showToastOnCompletion)
+
+    context.startService(intent)
+}
 
 /**
  * Updates the database on request.
  */
-class UpdateIntentService : IntentService("UpdateIntentService"), HasDb {
+class UpdateIntentService : IntentService("UpdateIntentService"), HasDb, AnkoLogger {
     companion object {
-        val UPDATE_COMPLETE = "org.eurofurence.connavigator.driver.UPDATE_COMPLETE"
-        val REQUEST_CODE = 1337
-
-        /**
-         * Dispatches an update
-         * @param context The host context for the service
-         */
-        fun dispatchUpdate(context: Context) {
-            logv("UIS") { "Dispatching update" }
-            context.startService(Intent(context, UpdateIntentService::class.java))
-        }
-
+        const val UPDATE_COMPLETE = "org.eurofurence.connavigator.driver.UPDATE_COMPLETE"
     }
 
     override val db by lazyLocateDb()
 
-    val updateCompleteMsg by updateComplete
+    @ImplicitReflectionSerializer
+    private val updateCompleteMsg by updateComplete
 
     // TODO: Sticky intent since there should only be one pending update
+    @ImplicitReflectionSerializer
     override fun onHandleIntent(intent: Intent?) {
-        logv("UIS") { "Handling update intent service intent" }
+        info { "Handling update intent service intent" }
+        val showToastOnCompletion = intent?.getBooleanExtra("showToastOnCompletion", false) ?: false
 
         // Initialize the response, the following code is net and IO oriented, it could fail
         val (response, responseObject) = {
-            logv("UIS") { "Retrieving sync since $date" }
+            info { "Updating remote preferences" }
+            RemotePreferences.update()
+            info { "Retrieving sync since $date" }
 
             // Get sync from server
-            val sync = apiService.sync.apiV2SyncGet(date)
+            val sync = apiService.sync.apiSyncGet(date)
 
-            logv("UIS") { sync }
+            info { sync }
+
+            if (sync.conventionIdentifier != BuildConfig.CONVENTION_IDENTIFIER) {
+                throw Exception("Convention Identifier mismatch\n\nExpected: ${BuildConfig.CONVENTION_IDENTIFIER}\nReceived: ${sync.conventionIdentifier}")
+            }
 
             val shift = DebugPreferences.debugDates
             val shiftOffset = DebugPreferences.eventDateOffset
 
             if (shift) {
-                logd { "Changing dates instead of updating" }
+                debug { "Changing dates instead of updating" }
                 // Get all dates explicitly
-                val base = apiService.days.apiV2EventConferenceDaysGet()
+                val base = apiService.days.apiEventConferenceDaysGet()
 
                 // Shift by offset
                 val currentDate = DateTime.now()
-                for ((i, day) in base.withIndex())
+                for ((i, day) in base.sortedBy { it.date }.withIndex())
                     day.date = currentDate.plusDays(i - shiftOffset).toDate()
 
                 // Make a new sync package entry
@@ -95,20 +113,43 @@ class UpdateIntentService : IntentService("UpdateIntentService"), HasDb {
             knowledgeGroups.apply(sync.knowledgeGroups.convert())
             maps.apply(sync.maps.convert())
 
+            // Reconcile events with favorites
+            faves = events.items.map { it.id }
+                    .toSet()
+                    .let { eventsIds ->
+                        faves.filter { it in eventsIds }
+                    }
+
+            // Update notifications for favorites
+            EventFavoriteBroadcast().updateNotifications(applicationContext, faves)
+
             // Store new time
             date = sync.currentDateTimeUtc
 
-            logv("UIS") { "Synced, current sync time is $date" }
+            info { "Synced, current sync time is $date" }
 
             // Make the success response message
-            logv("UIS") { "Completed update successfully" }
+            info { "Completed update successfully" }
+
+            if (showToastOnCompletion) {
+                runOnUiThread {
+                    longToast("Successfully updated all content.")
+                }
+            }
+
             UPDATE_COMPLETE.toIntent {
                 booleans["success"] = true
                 objects["time"] = date
             } to UpdateComplete(true, date, null)
         } catchAlternative { ex: Throwable ->
             // Make the fail response message, transfer exception
-            loge("UIS", ex) { "Completed update with error" }
+            if (showToastOnCompletion) {
+                runOnUiThread {
+                    longToast("Failed to update: ${ex.message}")
+                }
+            }
+
+            error("Completed update with error", ex)
             UPDATE_COMPLETE.toIntent {
                 booleans["success"] = false
                 objects["time"] = date

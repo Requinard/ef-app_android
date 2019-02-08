@@ -24,6 +24,8 @@ public class FursuitParticipationRecord  {
   private Boolean isBanned = null;
   @SerializedName("TokenRegistrationDateTimeUtc")
   private Date tokenRegistrationDateTimeUtc = null;
+  @SerializedName("LastCollectionDateTimeUtc")
+  private Date lastCollectionDateTimeUtc = null;
   @SerializedName("CollectionCount")
   private Integer collectionCount = null;
 
@@ -100,6 +102,16 @@ public class FursuitParticipationRecord  {
   /**
    **/
   @ApiModelProperty(value = "")
+  public Date getLastCollectionDateTimeUtc() {
+    return lastCollectionDateTimeUtc;
+  }
+  public void setLastCollectionDateTimeUtc(Date lastCollectionDateTimeUtc) {
+    this.lastCollectionDateTimeUtc = lastCollectionDateTimeUtc;
+  }
+
+  /**
+   **/
+  @ApiModelProperty(value = "")
   public Integer getCollectionCount() {
     return collectionCount;
   }
@@ -124,6 +136,7 @@ public class FursuitParticipationRecord  {
         (tokenValue == null ? fursuitParticipationRecord.tokenValue == null : tokenValue.equals(fursuitParticipationRecord.tokenValue)) &&
         (isBanned == null ? fursuitParticipationRecord.isBanned == null : isBanned.equals(fursuitParticipationRecord.isBanned)) &&
         (tokenRegistrationDateTimeUtc == null ? fursuitParticipationRecord.tokenRegistrationDateTimeUtc == null : tokenRegistrationDateTimeUtc.equals(fursuitParticipationRecord.tokenRegistrationDateTimeUtc)) &&
+        (lastCollectionDateTimeUtc == null ? fursuitParticipationRecord.lastCollectionDateTimeUtc == null : lastCollectionDateTimeUtc.equals(fursuitParticipationRecord.lastCollectionDateTimeUtc)) &&
         (collectionCount == null ? fursuitParticipationRecord.collectionCount == null : collectionCount.equals(fursuitParticipationRecord.collectionCount));
   }
 
@@ -137,6 +150,7 @@ public class FursuitParticipationRecord  {
     result = 31 * result + (tokenValue == null ? 0: tokenValue.hashCode());
     result = 31 * result + (isBanned == null ? 0: isBanned.hashCode());
     result = 31 * result + (tokenRegistrationDateTimeUtc == null ? 0: tokenRegistrationDateTimeUtc.hashCode());
+    result = 31 * result + (lastCollectionDateTimeUtc == null ? 0: lastCollectionDateTimeUtc.hashCode());
     result = 31 * result + (collectionCount == null ? 0: collectionCount.hashCode());
     return result;
   }
@@ -153,6 +167,7 @@ public class FursuitParticipationRecord  {
     sb.append("  tokenValue: ").append(tokenValue).append("\n");
     sb.append("  isBanned: ").append(isBanned).append("\n");
     sb.append("  tokenRegistrationDateTimeUtc: ").append(tokenRegistrationDateTimeUtc).append("\n");
+    sb.append("  lastCollectionDateTimeUtc: ").append(lastCollectionDateTimeUtc).append("\n");
     sb.append("  collectionCount: ").append(collectionCount).append("\n");
     sb.append("}\n");
     return sb.toString();

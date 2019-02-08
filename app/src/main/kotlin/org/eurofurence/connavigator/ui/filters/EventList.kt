@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.eurofurence.connavigator.ui.filters
 
 import com.google.firebase.perf.metrics.AddTrace
@@ -6,45 +8,61 @@ import org.eurofurence.connavigator.database.Db
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.eventIsHappening
 import org.eurofurence.connavigator.database.eventIsUpcoming
+import org.eurofurence.connavigator.ui.filters.FilterType.*
 import org.eurofurence.connavigator.util.extensions.fullTitle
+import org.joda.time.DateTime
 import java.util.*
-import kotlin.collections.HashMap
+import kotlin.Comparator
 import kotlin.collections.set
 
 /**
  * Wraps event entries and provides sorting for these. Filters are async
  */
 class EventList(override val db: Db) : HasDb {
-    val filters = HashMap<FilterType, Any>()
-    val UPCOMING_TIME_IN_MINUTES = 30
+    val filters = HashMap<FilterType, String>()
+    private val upcomingTimeInMinutes = 30
 
     @AddTrace(name = "EventList:applyEventFilters", enabled = true)
     fun applyFilters(): List<EventRecord> {
-        var events = events.items
+        val events = events.items.toMutableList()
 
-        this.filters.keys.forEach { key ->
-            when (key) {
-                FilterType.ON_DAY -> events = events.filter { it.conferenceDayId == filters[key] }
-                FilterType.ON_TRACK -> events = events.filter { it.conferenceTrackId == filters[key] }
-                FilterType.IN_ROOM -> events = events.filter { it.conferenceRoomId == filters[key] }
-                FilterType.BY_TITLE -> events = events.filter { it.title.contains(filters[key] as String, true) }
-                FilterType.IS_UPCOMING -> events = events.filter {
-                    eventIsUpcoming(it, org.joda.time.DateTime.now()
-                            , UPCOMING_TIME_IN_MINUTES)
+        val now = DateTime.now()
+        for ((k, v) in filters)
+            when (k) {
+                BY_TITLE -> events.removeAll { !it.fullTitle().contains(v, true) }
+
+                ON_DAY -> events.removeAll { it.conferenceDayId.toString() != v }
+                ON_TRACK -> events.removeAll { it.conferenceTrackId.toString() != v }
+                IN_ROOM -> events.removeAll { it.conferenceRoomId.toString() != v }
+
+                ORDER_START_TIME -> events.sortWith(Comparator { a, b ->
+                    a.startDateTimeUtc.compareTo(b.startDateTimeUtc).takeIf { it != 0 }
+                            ?: a.endDateTimeUtc.compareTo(b.endDateTimeUtc)
+                })
+
+                ORDER_DAY -> events.sortBy { it.startDateTimeUtc.time / (24 * 60 * 60 * 1000) }
+                ORDER_NAME -> events.sortBy { it.fullTitle() }
+                ORDER_DAY_AND_TIME -> events.sortWith(Comparator { a, b ->
+                    val dayA = a.startDateTimeUtc.time / (24 * 60 * 60 * 1000)
+                    val dayB = b.startDateTimeUtc.time / (24 * 60 * 60 * 1000)
+
+                    dayA.compareTo(dayB).takeIf { it != 0 }
+                            ?: a.startDateTimeUtc.compareTo(b.startDateTimeUtc).takeIf { it != 0 }
+                            ?: a.endDateTimeUtc.compareTo(b.endDateTimeUtc).takeIf { it != 0 }
+                            ?: a.fullTitle().compareTo(b.fullTitle())
+                })
+
+
+                IS_UPCOMING -> events.removeAll {
+                    !eventIsUpcoming(it, now, upcomingTimeInMinutes)
                 }
-                FilterType.IS_FAVORITED -> events = events.filter { it.id in faves }
-                FilterType.IS_CURRENT -> events = events.filter {
-                    eventIsHappening(it, org.joda.time.DateTime.now())
+                IS_FAVORITED -> events.removeAll {
+                    it.id !in faves
                 }
-                FilterType.ORDER_START_TIME -> events = events.sortedBy { it.startDateTimeUtc }
-                FilterType.ORDER_DAY_AND_TIME -> events = events.sortedBy { db.toDay(it)?.date }
-                        .groupBy { it.id }
-                        .map { it.value.sortedBy { it.startDateTimeUtc } }
-                        .flatten()
-                FilterType.ORDER_DAY -> events = events.sortedBy { db.toDay(it)!!.date }
-                FilterType.ORDER_NAME -> events = events.sortedBy { it.fullTitle() }
+                IS_CURRENT -> events.removeAll {
+                    !eventIsHappening(it, now)
+                }
             }
-        }
 
         return events.toList()
     }
@@ -53,19 +71,19 @@ class EventList(override val db: Db) : HasDb {
      * Filter by a date
      */
     fun onDay(dayID: UUID) =
-            this.apply { filters[FilterType.ON_DAY] = dayID }
+            this.apply { filters[FilterType.ON_DAY] = dayID.toString() }
 
     /**
      * Filter by room
      */
     fun inRoom(roomID: UUID) =
-            this.apply { filters[FilterType.IN_ROOM] = roomID }
+            this.apply { filters[FilterType.IN_ROOM] = roomID.toString() }
 
     /**
      * Filter by track
      */
     fun onTrack(trackId: UUID) =
-            this.apply { filters[FilterType.ON_TRACK] = trackId }
+            this.apply { filters[FilterType.ON_TRACK] = trackId.toString() }
 
     /**
      * Search by title
@@ -100,10 +118,10 @@ class EventList(override val db: Db) : HasDb {
     fun sortByDateAndTime() = this.apply { filters[FilterType.ORDER_DAY_AND_TIME] = "" }
 
     fun sortByDate() =
-            this.apply { filters[org.eurofurence.connavigator.ui.filters.FilterType.ORDER_DAY] = "" }
+            this.apply { filters[FilterType.ORDER_DAY] = "" }
 
     fun sortByName() =
-            this.apply { filters[org.eurofurence.connavigator.ui.filters.FilterType.ORDER_NAME] = "" }
+            this.apply { filters[FilterType.ORDER_NAME] = "" }
 }
 
 enum class FilterType {

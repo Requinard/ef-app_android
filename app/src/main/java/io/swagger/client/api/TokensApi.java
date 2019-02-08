@@ -25,7 +25,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class TokensApi {
-  String basePath = "https://localhost/";
+  String basePath = "https://localhost";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -50,12 +50,12 @@ public class TokensApi {
    * @param request 
    * @return AuthenticationResponse
   */
-  public AuthenticationResponse apiV2TokensRegSysPost (RegSysAuthenticationRequest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public AuthenticationResponse apiTokensRegSysPost (RegSysAuthenticationRequest request) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = request;
   
 
   // create path and map variables
-  String path = "/Api/v2/Tokens/RegSys".replaceAll("\\{format\\}","json");
+  String path = "/Api/Tokens/RegSys".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -67,7 +67,7 @@ public class TokensApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -113,13 +113,13 @@ public class TokensApi {
    * 
    * @param request 
   */
-  public void apiV2TokensRegSysPost (RegSysAuthenticationRequest request, final Response.Listener<AuthenticationResponse> responseListener, final Response.ErrorListener errorListener) {
+  public void apiTokensRegSysPost (RegSysAuthenticationRequest request, final Response.Listener<AuthenticationResponse> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = request;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Tokens/RegSys".replaceAll("\\{format\\}","json");
+    String path = "/Api/Tokens/RegSys".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -131,7 +131,7 @@ public class TokensApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -172,14 +172,14 @@ public class TokensApi {
   /**
   * 
   *   * Requires authorization   
-   * @return String
+   * @return AuthenticationResponse
   */
-  public String apiV2TokensWhoAmIGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public AuthenticationResponse apiTokensWhoAmIGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/Tokens/WhoAmI".replaceAll("\\{format\\}","json");
+  String path = "/Api/Tokens/WhoAmI".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -211,7 +211,7 @@ public class TokensApi {
       try {
         String localVarResponse = apiInvoker.invokeAPI (basePath, path, "GET", queryParams, postBody, headerParams, formParams, contentType, authNames);
         if(localVarResponse != null){
-           return (String) ApiInvoker.deserialize(localVarResponse, "", String.class);
+           return (AuthenticationResponse) ApiInvoker.deserialize(localVarResponse, "", AuthenticationResponse.class);
         } else {
            return null;
         }
@@ -237,13 +237,13 @@ public class TokensApi {
    *   * Requires authorization   
 
   */
-  public void apiV2TokensWhoAmIGet (final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiTokensWhoAmIGet (final Response.Listener<AuthenticationResponse> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/Tokens/WhoAmI".replaceAll("\\{format\\}","json");
+    String path = "/Api/Tokens/WhoAmI".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -278,7 +278,7 @@ public class TokensApi {
           @Override
           public void onResponse(String localVarResponse) {
             try {
-              responseListener.onResponse((String) ApiInvoker.deserialize(localVarResponse,  "", String.class));
+              responseListener.onResponse((AuthenticationResponse) ApiInvoker.deserialize(localVarResponse,  "", AuthenticationResponse.class));
             } catch (ApiException exception) {
                errorListener.onErrorResponse(new VolleyError(exception));
             }

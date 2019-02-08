@@ -1,11 +1,13 @@
+@file:Suppress("MemberVisibilityCanBePrivate", "unused")
+
 package org.eurofurence.connavigator.util.v2
 
 /**
  * Definition of a model join.
  */
 class Joiner<in L, in R, out I>(
-        val leftId: (L) -> I,
-        val rightId: (R) -> I) {
+        val leftId: (L) -> I?,
+        val rightId: (R) -> I?) {
 
     val inverse get() = Joiner(rightId, leftId)
 }
@@ -28,14 +30,6 @@ class JoinerBinding<L : Any, R : Any, I>(
             rightBinding[joiner.leftId(left)]?.let {
                 left to it
             }
-
-    fun join(left: Iterable<L>) =
-            left.mapNotNull { join(it) }
-
-    /**
-     * Gets the inverse join.
-     */
-    val inverse get() = JoinerBinding(joiner.inverse, rightBinding, leftBinding)
 }
 
 operator fun <L : Any, R : Any, I> L.get(joinerBinding: JoinerBinding<L, R, I>) =
@@ -47,7 +41,7 @@ operator fun <L : Any, R : Any, I> Iterable<L>.get(joinerBinding: JoinerBinding<
 /**
  * Defines a model join by key extraction functions.
  */
-infix fun <L, R, I> ((L) -> I).join(right: (R) -> I) = Joiner(this, right)
+infix fun <L, R, I> ((L) -> I?).join(right: (R) -> I?) = Joiner(this, right)
 
 class IdSource<T : Any> : Source<T, T> {
     override fun get(i: T?) = i

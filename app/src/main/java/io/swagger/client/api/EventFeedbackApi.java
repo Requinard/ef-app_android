@@ -24,7 +24,7 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.TimeoutException;
 
 public class EventFeedbackApi {
-  String basePath = "https://localhost/";
+  String basePath = "https://localhost";
   ApiInvoker apiInvoker = ApiInvoker.getInstance();
 
   public void addHeader(String key, String value) {
@@ -48,12 +48,12 @@ public class EventFeedbackApi {
   *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**, **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
    * @return List<EventFeedbackRecord>
   */
-  public List<EventFeedbackRecord> apiV2EventFeedbackGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public List<EventFeedbackRecord> apiEventFeedbackGet () throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = null;
   
 
   // create path and map variables
-  String path = "/Api/v2/EventFeedback".replaceAll("\\{format\\}","json");
+  String path = "/Api/EventFeedback".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -111,13 +111,13 @@ public class EventFeedbackApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**, **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
 
   */
-  public void apiV2EventFeedbackGet (final Response.Listener<List<EventFeedbackRecord>> responseListener, final Response.ErrorListener errorListener) {
+  public void apiEventFeedbackGet (final Response.Listener<List<EventFeedbackRecord>> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = null;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/EventFeedback".replaceAll("\\{format\\}","json");
+    String path = "/Api/EventFeedback".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -173,12 +173,12 @@ public class EventFeedbackApi {
    * @param record 
    * @return void
   */
-  public void apiV2EventFeedbackPost (EventFeedbackRecord record) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
+  public void apiEventFeedbackPost (EventFeedbackRecord record) throws TimeoutException, ExecutionException, InterruptedException, ApiException {
      Object postBody = record;
   
 
   // create path and map variables
-  String path = "/Api/v2/EventFeedback".replaceAll("\\{format\\}","json");
+  String path = "/Api/EventFeedback".replaceAll("\\{format\\}","json");
 
   // query params
   List<Pair> queryParams = new ArrayList<Pair>();
@@ -190,7 +190,7 @@ public class EventFeedbackApi {
 
 
       String[] contentTypes = {
-  "application/json","text/json","application/json-patch+json"
+  "application/json-patch+json","application/json","text/json","application/*+json"
       };
       String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 
@@ -236,13 +236,13 @@ public class EventFeedbackApi {
    *   * Requires authorization     * Requires any of the following roles: **&#x60;Attendee&#x60;**, **&#x60;Developer&#x60;**, **&#x60;System&#x60;**
    * @param record 
   */
-  public void apiV2EventFeedbackPost (EventFeedbackRecord record, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
+  public void apiEventFeedbackPost (EventFeedbackRecord record, final Response.Listener<String> responseListener, final Response.ErrorListener errorListener) {
     Object postBody = record;
 
   
 
     // create path and map variables
-    String path = "/Api/v2/EventFeedback".replaceAll("\\{format\\}","json");
+    String path = "/Api/EventFeedback".replaceAll("\\{format\\}","json");
 
     // query params
     List<Pair> queryParams = new ArrayList<Pair>();
@@ -254,7 +254,7 @@ public class EventFeedbackApi {
 
 
     String[] contentTypes = {
-      "application/json","text/json","application/json-patch+json"
+      "application/json-patch+json","application/json","text/json","application/*+json"
     };
     String contentType = contentTypes.length > 0 ? contentTypes[0] : "application/json";
 

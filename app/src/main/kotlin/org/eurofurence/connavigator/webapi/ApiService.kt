@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.eurofurence.connavigator.webapi
 
 import android.content.Context
@@ -7,16 +9,17 @@ import com.android.volley.toolbox.DiskBasedCache
 import com.android.volley.toolbox.HurlStack
 import io.swagger.client.ApiInvoker
 import io.swagger.client.api.*
+import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.util.extensions.catchHandle
-import org.eurofurence.connavigator.util.extensions.logd
-import org.eurofurence.connavigator.util.extensions.loge
+import org.jetbrains.anko.AnkoLogger
+import org.jetbrains.anko.debug
 import java.io.File
 
 /**
  * The API services manage extended API functionality
  */
-object apiService {
-    val apiPath = "https://gdakon.terarion.com"
+object apiService : AnkoLogger {
+    var apiPath: String = "${BuildConfig.API_BASE_URL}/${BuildConfig.CONVENTION_IDENTIFIER}"
 
     val announcements by lazy { AnnouncementsApi().apply { basePath = apiPath } }
 
@@ -55,7 +58,7 @@ object apiService {
      */
     fun initialize(context: Context) {
         {
-            logd("API") { "Initializing" }
+            debug { "Initializing" }
 
             // Create the cache
             val cache = DiskBasedCache(File(context.cacheDir, "volley"))
@@ -63,15 +66,15 @@ object apiService {
             //Create the network
             val originalNetwork = BasicNetwork(HurlStack())
             val network = Network {
-                logd("NET") { "Performing request: ${it.url}" }
+                debug { "Performing request: ${it.url}" }
                 originalNetwork.performRequest(it)
             }
 
             // Sets up the API invoker
             ApiInvoker.initializeInstance(cache, network, 2, null, 60)
-            logd("API") { "Done initializing, ${ApiInvoker.getInstance()}" }
+            debug { "Done initializing, ${ApiInvoker.getInstance()}" }
         } catchHandle { t: Throwable ->
-            loge("API") { "Initialization failed with ${t.message}" }
+            debug { "Initialization failed with ${t.message}" }
         }
     }
 }

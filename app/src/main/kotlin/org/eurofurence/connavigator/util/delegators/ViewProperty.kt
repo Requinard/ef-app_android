@@ -1,3 +1,5 @@
+@file:Suppress("unused")
+
 package org.eurofurence.connavigator.util.delegators
 
 import android.app.Activity
@@ -12,25 +14,10 @@ import kotlin.reflect.KProperty
  * [view].
  * @param T The method used to find a view in the container by string
  */
-class ViewProperty<in T, U : View>(val findView: (T, String) -> U) {
-    /**
-     * The status of the property delegate.
-     */
-    var initialized = false
-
-    /**
-     * The store for the item in the property delegate.
-     */
-    lateinit var item: U
+class ViewProperty<in T, U : View>(private val findView: (T, String) -> U) {
 
     operator fun getValue(container: T, property: KProperty<*>): U {
-        // If already initialized, return that value
-        if (initialized)
-            return item
-        // Find by name, then set initialized and return the item
-        item = findView(container, property.name)
-        initialized = true
-        return item
+        return findView(container, property.name)
     }
 }
 
@@ -38,6 +25,7 @@ class ViewProperty<in T, U : View>(val findView: (T, String) -> U) {
  * Returns a property delegate for view injection, returns a [ViewProperty]. The context is an activity.
  * @param T The class of the view to inject
  */
+@Deprecated("Use Anko instead of layout inflation.")
 inline fun <reified T : View> view(nameInResource: String? = null) = ViewProperty {
     container: Activity, name ->
     // Find view by name, cast it
@@ -54,6 +42,7 @@ inline fun <reified T : View> view(nameInResource: String? = null) = ViewPropert
  * Returns a property delegate for view injection, returns a [ViewProperty]. The context is a fragment.
  * @param T The class of the view to inject
  */
+@Deprecated("Use Anko instead of layout inflation.")
 inline fun <reified T : View> Fragment.view(nameInResource: String? = null) = ViewProperty {
     container: Fragment, name ->
     if (container.view == null)
@@ -61,7 +50,7 @@ inline fun <reified T : View> Fragment.view(nameInResource: String? = null) = Vi
 
     // Find view by name, cast it
     val r = container.view!!.findViewById<T>(
-            container.resources.getIdentifier(nameInResource ?: name, "id", container.context.packageName))
+            container.resources.getIdentifier(nameInResource ?: name, "id", container.context!!.packageName))
 
     if (r == null)
         throw IllegalArgumentException("Cannot locate ${nameInResource ?: name} in $container.")
@@ -73,6 +62,7 @@ inline fun <reified T : View> Fragment.view(nameInResource: String? = null) = Vi
  * Returns a property delegate for view injection, returns a [ViewProperty]. The context is a view.
  * @param T The class of the view to inject
  */
+@Deprecated("Use Anko instead of layout inflation.")
 inline fun <reified T : View> View.view(nameInResource: String? = null) = ViewProperty {
     container: View, name ->
     // Find view by name, cast it
@@ -88,6 +78,7 @@ inline fun <reified T : View> View.view(nameInResource: String? = null) = ViewPr
  * Returns a property delegate for view injection, returns a [ViewProperty]. The context is a view holder.
  * @param T The class of the view to inject
  */
+@Deprecated("Use Anko instead of layout inflation.")
 inline fun <reified T : View> ViewHolder.view(nameInResource: String? = null) = ViewProperty {
     container: ViewHolder, name ->
     // Find view by name, cast it
@@ -105,6 +96,7 @@ inline fun <reified T : View> ViewHolder.view(nameInResource: String? = null) = 
  * Returns a property delegate for view injection, returns a [ViewProperty]. The context is a view.
  * @param T The class of the view to inject
  */
+@Deprecated("Use Anko instead of layout inflation.")
 inline fun <reified T : View> Activity.header(
         crossinline navigationView: () -> NavigationView, index: Int = 0, nameInResource: String? = null) =
         ViewProperty {
