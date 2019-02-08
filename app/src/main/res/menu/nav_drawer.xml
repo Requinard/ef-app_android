@@ -3,77 +3,89 @@
 
     <group android:checkableBehavior="single">
         <item
-                android:id="@id/fragmentViewHome"
-                android:icon="@drawable/icon_home"
-                android:title="@string/misc_home"/>
+            android:id="@id/fragmentViewHome"
+            android:icon="@drawable/icon_home"
+            android:title="@string/misc_home" />
         <item
-                android:id="@+id/infoListFragment"
-                android:icon="@drawable/icon_info"
-                android:title="@string/navigation_drawer_item_info"/>
+            android:id="@+id/infoListFragment"
+            android:visible="false"
+            android:icon="@drawable/icon_info"
+            android:title="@string/navigation_drawer_item_info" />
         <item
-                android:id="@id/eventListFragment"
-                android:icon="@drawable/icon_calendar"
-                android:title="@string/events"/>
+            android:id="@id/eventListFragment"
+            android:icon="@drawable/icon_calendar"
+            android:title="@string/events" />
         <item
-                android:id="@id/dealerListFragment"
-                android:icon="@drawable/icon_dealer"
-                android:title="@string/dealers"/>
+            android:id="@id/dealerListFragment"
+            android:icon="@drawable/icon_dealer"
+            android:visible="false"
+            android:title="@string/dealers" />
         <item
-                android:id="@id/mapListFragment"
-                android:icon="@drawable/icon_map_world"
-                android:title="@string/misc_maps"/>
+            android:id="@id/mapListFragment"
+            android:icon="@drawable/icon_map_world"
+            android:title="@string/misc_maps" />
     </group>
 
-    <item android:title="@string/navigation_drawer_item_personal">
+    <item android:title="@string/navigation_drawer_item_personal"
+        android:visible="false">
         <menu>
             <group android:checkableBehavior="single">
                 <item
-                        android:id="@id/loginActivity"
-                        android:checkable="false"
-                        android:icon="@drawable/icon_user"
-                        android:title="@string/login"/>
+                    android:id="@id/loginActivity"
+                    android:checkable="false"
+                    android:icon="@drawable/icon_user"
+                    android:title="@string/login" />
                 <item
-                        android:id="@+id/navMessages"
-                        android:icon="@drawable/icon_message"
-                        android:title="@string/navigation_drawer_item_personal_messages"/>
+                    android:id="@+id/navMessages"
+                    android:icon="@drawable/icon_message"
+                    android:title="@string/navigation_drawer_item_personal_messages" />
                 <item
-                        android:id="@+id/navFursuitGames"
-                        android:icon="@drawable/icon_paw"
-                        android:title="@string/navigation_drawer_item_personal_collect_em_all"/>
+                    android:id="@+id/navFursuitGames"
+                    android:icon="@drawable/icon_paw"
+                    android:title="@string/navigation_drawer_item_personal_collect_em_all" />
             </group>
         </menu>
     </item>
     <item android:title="@string/navigation_drawer_item_external">
         <menu>
             <group>
-                <item android:id="@+id/navWebSite"
-                      android:title="@string/navigation_drawer_item_external_website"
-                      android:icon="@drawable/icon_domain"/>
-                <item android:id="@+id/navWebTwitter"
-                      android:title="@string/navigation_drawer_item_external_twitter"
-                      android:icon="@drawable/icon_twitter"/>
+                <item
+                    android:id="@+id/navWebSite"
+                    android:icon="@drawable/icon_domain"
+                    android:title="@string/navigation_drawer_item_external_website" />
+                <item
+                    android:id="@+id/navWebTwitter"
+                    android:icon="@drawable/icon_twitter"
+                    android:title="@string/navigation_drawer_item_external_twitter" />
             </group>
         </menu>
     </item>
 
-    <item android:id="@+id/groupManagement" android:title="@string/navigation_drawer_item_app_management">
+    <item
+        android:id="@+id/groupManagement"
+        android:title="@string/navigation_drawer_item_app_management">
         <menu>
-            <item android:id="@+id/navFeedback"
-                  android:title="@string/action_report_feedback"
-                  android:visible="false"
-                  android:icon="@drawable/icon_like_filled"/>
-            <item android:id="@+id/navDevReload"
-                  android:title="@string/navigation_drawer_item_app_management_update"
-                  android:icon="@drawable/icon_refresh"/>
-            <item android:id="@+id/navDevClear"
-                  android:title="@string/clear_database"
-                  android:icon="@drawable/icon_delete"/>
-            <item android:id="@id/activitySettings"
-                  android:title="@string/settings"
-                  android:icon="@drawable/icon_settings"/>
-            <item android:id="@id/fragmentViewAbout"
-                  android:icon="@drawable/icon_about"
-                  android:title="@string/navigation_drawer_item_app_management_about"/>
+            <item
+                android:id="@+id/navFeedback"
+                android:icon="@drawable/icon_like_filled"
+                android:title="@string/action_report_feedback"
+                android:visible="false" />
+            <item
+                android:id="@+id/navDevReload"
+                android:icon="@drawable/icon_refresh"
+                android:title="@string/navigation_drawer_item_app_management_update" />
+            <item
+                android:id="@+id/navDevClear"
+                android:icon="@drawable/icon_delete"
+                android:title="@string/clear_database" />
+            <item
+                android:id="@id/activitySettings"
+                android:icon="@drawable/icon_settings"
+                android:title="@string/settings" />
+            <item
+                android:id="@id/fragmentViewAbout"
+                android:icon="@drawable/icon_about"
+                android:title="@string/navigation_drawer_item_app_management_about" />
         </menu>
     </item>
 

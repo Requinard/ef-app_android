@@ -5,8 +5,8 @@
     <string name="navigation_drawer_open">Open navigation drawer</string>
     <string name="navigation_drawer_close">Close navigation drawer</string>
 
-    <string name="navigation_drawer_title">Eurofurence 24</string>
-    <string name="navigation_drawer_subtitle">Aviators - Conquer the Sky!</string>
+    <string name="navigation_drawer_title">Gdakon 9</string>
+    <string name="navigation_drawer_subtitle">Ancient Greece</string>
 
     <string name="navigation_drawer_item_info">Info</string>
     <string name="navigation_drawer_item_poi">Point of Interest</string>
@@ -224,7 +224,7 @@
     <string name="misc_days">Days</string>
     <string name="misc_current_day">Day %1$d</string>
     <string name="misc_days_left">Only %1$d days left!</string>
-    <string name="misc_until_next_ef">Until next EF</string>
+    <string name="misc_until_next_ef">Until Gdakon</string>
     <string name="misc_room_number">Room: %1$s</string>
     <string name="misc_rooms">Rooms</string>
     <string name="misc_map">Map</string>

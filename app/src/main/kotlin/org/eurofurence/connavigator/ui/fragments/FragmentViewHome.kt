@@ -130,7 +130,7 @@ class HomeUi : AnkoComponent<Fragment> {
 
                 lparams(matchParent, matchParent)
 
-                imageView(R.drawable.banner_2018) {
+                imageView(R.drawable.bg) {
                     adjustViewBounds = true
                     setBackgroundColor(Color.WHITE)
                     ViewCompat.setElevation(this, 15f)
@@ -141,6 +141,7 @@ class HomeUi : AnkoComponent<Fragment> {
                 loginWidget = linearLayout {
                     id = R.id.home_user_status
                     lparams(matchParent, wrapContent)
+                    visibility = View.GONE
                 }.lparams(matchParent, wrapContent) {
                     setMargins(0, dip(10), 0, 0)
                 }

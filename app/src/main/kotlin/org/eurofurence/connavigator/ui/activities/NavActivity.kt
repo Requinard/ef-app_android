@@ -85,8 +85,8 @@ class NavActivity : AppCompatActivity(), AnkoLogger {
                 yesButton { ResetReceiver().clearData(this@NavActivity) }
                 noButton { }
             }.show().let { true }
-            R.id.navWebSite -> browse("https://eurofurence.org")
-            R.id.navWebTwitter -> browse("https://twitter.com/eurofurence")
+            R.id.navWebSite -> browse("https://gdakon.org")
+            R.id.navWebTwitter -> browse("https://twitter.com/gdakon")
             R.id.navFursuitGames -> browse("https://app.eurofurence.org/collectemall/")
             else -> item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
         }
