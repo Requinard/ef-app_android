@@ -2,16 +2,19 @@
 <resources>
     <color name="blackFaded">#20000000</color>
     <color name="primaryFaded">#20006459</color>
-    <color name="primaryLighter">#A38677</color>
-    <color name="primaryLight">#8F6C5A</color>
-    <color name="primary">#7b523d</color>
-    <color name="primaryDark">#734B37</color>
-    <color name="primaryDarker">#68412F</color>
-    <color name="accentLighter">#9CCFF3</color>
-    <color name="accentLight">#6CB5E9</color>
-    <color name="accent">#47A0DF</color>
-    <color name="accentDark">#258BD3</color>
-    <color name="accentDarker">#0976C3</color>
+
+    <color name="accentLighter">#A38677</color>
+    <color name="accentLight">#8F6C5A</color>
+    <color name="accent">#7b523d</color>
+    <color name="accentDark">#734B37</color>
+    <color name="accentDarker">#68412F</color>
+
+    <color name="primaryLighter">#9CCFF3</color>
+    <color name="primaryLight">#6CB5E9</color>
+    <color name="primary">#47A0DF</color>
+    <color name="primaryDark">#258BD3</color>
+    <color name="primaryDarker">#0976C3</color>
+
     <color name="textWhite">#dcdcdc</color>
     <color name="textBlack">#111</color>
     <color name="backgroundGrey">#DDD</color>

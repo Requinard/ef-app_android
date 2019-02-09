@@ -85,14 +85,12 @@ class NavActivity : AppCompatActivity(), AnkoLogger {
                 yesButton { ResetReceiver().clearData(this@NavActivity) }
                 noButton { }
             }.show().let { true }
-            R.id.navWebSite -> browse("https://gdakon.org")
-            R.id.navWebTwitter -> browse("https://twitter.com/gdakon")
-            R.id.navFursuitGames -> browse("https://app.eurofurence.org/collectemall/")
+            R.id.navWebSite -> browse("https://2019.gdakon.org")
+            R.id.navWebTwitter -> browse("https://twitter.com/gdakonPL")
+            R.id.navFursuitGames -> browse("https://2019.gdakon.org")
             else -> item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
         }
     }
-
-
 }
 
 internal class NavUi : AnkoComponent<NavActivity> {
