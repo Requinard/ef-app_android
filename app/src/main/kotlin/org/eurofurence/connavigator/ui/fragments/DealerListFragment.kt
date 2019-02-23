@@ -164,6 +164,7 @@ class DealersUi : AnkoComponent<Fragment> {
                 linearLayout {
                     // Filter types
                     weightSum = 100F
+                    visibility = View.GONE
 
                     textView {
                         textResource = R.string.misc_show
