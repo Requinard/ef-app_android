@@ -45,8 +45,8 @@
     <string name="settings_analytics_enabled_summary_off">Usage statistics turned off</string>
     <string name="settings_analytics_polling_intervals">Analytics Polling Interval</string>
     <string name="settings_analytics_polling_intervals_summary">Percentage of user events to track</string>
-    <string name="settings_analytics_allow_collecting_of_analytical_data">Allow Eurofurence to collect anonymous analytical data.</string>
-    <string name="settings_analytics_allow_collecting_of_performance_data">Allow Eurofurence to collect performance data.</string>
+    <string name="settings_analytics_allow_collecting_of_analytical_data">Allow Gdakon to collect anonymous analytical data.</string>
+    <string name="settings_analytics_allow_collecting_of_performance_data">Allow Gdakon to collect performance data.</string>
 
     <string name="settings_debug">Debug</string>
     <string name="settings_debug_summary">Settings to debug the application</string>
@@ -176,9 +176,9 @@
     <string name="login_logout">Logout</string>
     <string name="login_logged_out">Logging you out, goodbye!</string>
     <string name="login_not_logged_in">You\'re not logged in!</string>
-    <string name="login_tap_to_login">Tap here to login using your registration details and receive personalized information from Eurofurence!</string>
+    <string name="login_tap_to_login">Tap here to login using your registration details and receive personalized information from Gdakon!</string>
     <string name="login_unsuccessful">Your login was unsuccessful, are you sure you entered the correct data?</string>
-    <string name="login_information">Your login credentials for the app are the same as for the Eurofurence Registration System.\n\nIf you do not remember or have access to them, you can ask for a PIN code to sign in at the registration desk or security office.</string>
+    <string name="login_information">Your login credentials for the app are the same as for the Gdakon Registration System.</string>
     <string name="login_failed">Failed to log you in!</string>
     <string name="login_needed">You need to login before you can see private messages!</string>
     <!-- Login end -->
@@ -199,8 +199,8 @@
     <!-- Clear DB end -->
 
     <!-- Misc -->
-    <string name="misc_welcome_text">Welcome to the official Eurofurence App for Android!</string>
-    <string name="misc_welcome_before_use">Before you can use this application we need to download some data from the Eurofurence servers to your phone.\n\nThis will consume a few megabytes of traffic and can take anywhere from a few seconds up to a few minutes, depending on the speed of your connection.\n\nIs it okay to download the data now?</string>
+    <string name="misc_welcome_text">Welcome to the official Gdakon App for Android!</string>
+    <string name="misc_welcome_before_use">Before you can use this application we need to download some data from the Gdakon servers to your phone.\n\nThis will consume a few megabytes of traffic and can take anywhere from a few seconds up to a few minutes, depending on the speed of your connection.\n\nIs it okay to download the data now?</string>
     <string name="misc_welcome_user">Welcome %1$s</string>
     <string name="misc_hello_player">Hello %1$s</string>
     <string name="misc_home">Home</string>
