@@ -57,7 +57,7 @@ class MapsUi : AnkoComponent<Fragment> {
     lateinit var mapViewPager: ViewPager
     lateinit var tabs: TabLayout
     override fun createView(ui: AnkoContext<Fragment>) = with(ui) {
-        frameLayout {
+        verticalLayout {
             tabs = tabLayout{
                 backgroundResource = R.color.primaryDark
                 setTabTextColors(
@@ -66,6 +66,7 @@ class MapsUi : AnkoComponent<Fragment> {
                 )
                 tabMode = TabLayout.MODE_SCROLLABLE
             }.lparams(matchParent, wrapContent)
+
             mapViewPager = multitouchViewPager {
                 id = R.id.map_view_pager
             }.lparams(matchParent, matchParent)
