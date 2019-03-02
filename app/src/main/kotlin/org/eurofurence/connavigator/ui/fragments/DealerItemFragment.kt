@@ -114,7 +114,6 @@ class DealerItemFragment : Fragment(), HasDb, AnkoLogger {
                     else
                         dealer.aboutTheArtistText
 
-
             if (dealer.artPreviewImageId == null) {
                 ui.artPreview.visibility = View.GONE
 
@@ -412,6 +411,8 @@ class DealerUi : AnkoComponent<Fragment> {
                         // artist
                         padding = dip(20)
                         backgroundResource = R.color.cardview_light_background
+
+                        visibility = View.GONE
                         textView {
                             textResource = R.string.dealer_about_artist
                             compatAppearance = R.style.TextAppearance_AppCompat_Medium
