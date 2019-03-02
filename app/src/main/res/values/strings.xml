@@ -178,7 +178,7 @@
     <string name="login_not_logged_in">You\'re not logged in!</string>
     <string name="login_tap_to_login">Tap here to login using your registration details and receive personalized information from Gdakon!</string>
     <string name="login_unsuccessful">Your login was unsuccessful, are you sure you entered the correct data?</string>
-    <string name="login_information">Your login credentials for the app are the same as for the Gdakon Registration System.\n\nIf you do not remember or have access to them, you can ask for a PIN code to sign in at the registration desk or security office.</string>
+    <string name="login_information">Your login credentials for the app are the same as for the Gdakon Registration System.</string>
     <string name="login_failed">Failed to log you in!</string>
     <string name="login_needed">You need to login before you can see private messages!</string>
     <!-- Login end -->
