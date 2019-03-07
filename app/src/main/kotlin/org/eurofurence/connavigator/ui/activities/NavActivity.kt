@@ -17,8 +17,7 @@ import androidx.navigation.ui.onNavDestinationSelected
 import androidx.navigation.ui.setupWithNavController
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.broadcast.ResetReceiver
-import org.eurofurence.connavigator.database.UpdateIntentService
-import org.eurofurence.connavigator.database.dispatchUpdate
+import org.eurofurence.connavigator.database.*
 import org.eurofurence.connavigator.pref.RemotePreferences
 import org.jetbrains.anko.*
 import org.jetbrains.anko.appcompat.v7.toolbar
@@ -27,8 +26,10 @@ import org.jetbrains.anko.support.v4.drawerLayout
 import org.joda.time.DateTime
 import org.joda.time.Days
 
-class NavActivity : AppCompatActivity(), AnkoLogger {
+class NavActivity : AppCompatActivity(), AnkoLogger, HasDb {
     internal val ui = NavUi()
+
+    override val db by lazyLocateDb()
 
     val navFragment by lazy { NavHostFragment.create(R.navigation.nav_graph) }
     val navController by lazy { navFragment.findNavController() }

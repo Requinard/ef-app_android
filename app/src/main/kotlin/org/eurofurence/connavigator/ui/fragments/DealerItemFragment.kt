@@ -280,6 +280,8 @@ class DealerUi : AnkoComponent<Fragment> {
             backgroundResource = R.color.backgroundGrey
             scrollView {
                 verticalLayout {
+                    textView("fabduawbdabdw dgavgwd hawdjw adg awjhd jwha dawdkawdkawda HAHA TURNS OUT THSI TEXT WAS NOT LONG ENOUGH FOR OTHER DEVICES CAN YOU IMAGINE THAT?").lparams(matchParent, dip(1))
+
                     lparams(matchParent, matchParent)
 
                     verticalLayout {

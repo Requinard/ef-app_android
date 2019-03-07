@@ -159,7 +159,7 @@ class DealersUi : AnkoComponent<Fragment> {
             backgroundResource = R.color.backgroundGrey
 
             // Needed to properly inflate the android layouts. In case of big screens, increase facerolling
-            textView("fabduawbdabdw dgavgwd hawdjw adg awjhd jwha dawdkawdkawda").lparams(matchParent, dip(1))
+            textView("fabduawbdabdw dgavgwd hawdjw adg awjhd jwha dawdkawdkawda HAHA TURNS OUT THSI TEXT WAS NOT LONG ENOUGH FOR OTHER DEVICES CAN YOU IMAGINE THAT?").lparams(matchParent, dip(1))
 
             verticalLayout {
                 // Search widgets
