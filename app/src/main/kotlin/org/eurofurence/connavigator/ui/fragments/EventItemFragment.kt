@@ -153,7 +153,7 @@ class EventItemFragment : DisposingFragment(), HasDb, AnkoLogger {
             }
 
             ui.feedbackButton.apply {
-                visibility = if (event.isAcceptingFeedback) View.VISIBLE else View.GONE
+                visibility = View.GONE
 
                 setImageDrawable(context.createFADrawable(R.string.fa_comment))
 

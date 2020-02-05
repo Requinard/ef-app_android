@@ -132,9 +132,8 @@ class EventRecyclerFragment : DisposingFragment(), HasDb, AnkoLogger {
                 singleLine = true
                 ellipsize = TextUtils.TruncateAt.END
 
-                // Bind from event's title.
-                from { isDeviatingFromConBook to fullTitle() } into { (deviating, title) ->
-                    text = if (deviating) "{fa-pencil} $title" else title
+                from {title} into {
+                    content = it ?: ""
                 }
             }
 

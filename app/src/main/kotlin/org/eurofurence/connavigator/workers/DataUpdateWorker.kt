@@ -61,7 +61,7 @@ class DataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worke
             info { "Retrieving sync since $date" }
             // Get sync from server
 
-           // forcedSync(showToastOnCompletion)
+           forcedSync(showToastOnCompletion)
         } catch (ex: Throwable) {
             warn("Error occured during update", ex)
             BackgroundPreferences.loadingState = LoadingState.FAILED
@@ -78,6 +78,10 @@ class DataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worke
 
         apiService.rooms.apiEventConferenceRoomsGet().apply {
             db.rooms.items = this
+        }
+
+        apiService.days.apiEventConferenceDaysGet().apply {
+            db.days.items = this
         }
 
         apiService.tracks.apiEventConferenceTracksGet().apply {
