@@ -4,14 +4,12 @@ import android.content.Context
 import androidx.work.*
 import com.pawegio.kandroid.runOnUiThread
 import io.swagger.client.model.AggregatedDeltaResponse
-import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.database.Db
 import org.eurofurence.connavigator.database.RootDb
 import org.eurofurence.connavigator.preferences.BackgroundPreferences
 import org.eurofurence.connavigator.preferences.LoadingState
 import org.eurofurence.connavigator.preferences.RemotePreferences
 import org.eurofurence.connavigator.services.ImageService
-import org.eurofurence.connavigator.services.PMService
 import org.eurofurence.connavigator.services.apiService
 import org.eurofurence.connavigator.util.v2.convert
 import org.jetbrains.anko.AnkoLogger
@@ -62,29 +60,47 @@ class DataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worke
 
             info { "Retrieving sync since $date" }
             // Get sync from server
-            apiService.sync.apiSyncGet(date).apply {
-                if (this.conventionIdentifier != BuildConfig.CONVENTION_IDENTIFIER) {
-                    throw Exception("Convention Identifier mismatch\n\nExpected: ${BuildConfig.CONVENTION_IDENTIFIER}\nReceived: ${this.conventionIdentifier}")
-                }
-            }
+
+            forcedSync(showToastOnCompletion)
         } catch (ex: Throwable) {
             warn("Error occured during update", ex)
             BackgroundPreferences.loadingState = LoadingState.FAILED
             return Result.failure()
         }
 
-        // Apply sync
-        applySync(sync, showToastOnCompletion)
+        return Result.success()
+    }
 
-        // Fetch private messages
-        FetchPrivateMessageWorker.execute(applicationContext)
-
-        // Fetch images
-        if (preloadChangedImages && sync.images.changedEntities.isNotEmpty()) {
-            loadImages(sync)
+    private fun forcedSync(showToastOnCompletion: Boolean) {
+        apiService.announcements.apiAnnouncementsGet().apply {
+            db.announcements.items = this
         }
 
-        return Result.success()
+        apiService.rooms.apiEventConferenceRoomsGet().apply {
+            db.rooms.items = this
+        }
+
+        apiService.tracks.apiEventConferenceTracksGet().apply {
+            db.tracks.items = this
+        }
+
+        apiService.events.apiEventsGet().apply {
+            db.events.items = this
+        }
+
+        apiService.dealers.apiDealersGet().apply {
+            db.dealers.items = this
+        }
+
+        apiService.maps.apiMapsGet().apply {
+            db.maps.items = this
+        }
+
+        apiService.images.apiImagesGet().apply {
+            db.images.items = this
+        }
+
+        finishLoading(showToastOnCompletion)
     }
 
     private fun loadImages(sync: AggregatedDeltaResponse) {
@@ -137,7 +153,11 @@ class DataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worke
         db.date = sync.currentDateTimeUtc
 
 
-        info { "Synced, current sync time is $db.date" }
+        finishLoading(showToastOnCompletion)
+    }
+
+    private fun finishLoading(showToastOnCompletion: Boolean) {
+        info { "Synced, current sync time is ${db.date}" }
 
         if (showToastOnCompletion) {
             runOnUiThread {

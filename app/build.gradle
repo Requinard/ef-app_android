@@ -16,8 +16,8 @@ android {
         versionName "2.3.3"
         multiDexEnabled true
 
-        buildConfigField "String", "API_BASE_URL", '"https://gdakon.terarion.com"'
-        buildConfigField "String", "CONVENTION_IDENTIFIER", '"GD9"'
+        buildConfigField "String", "API_BASE_URL", '"https://api.gdakon.pl"'
+        buildConfigField "String", "CONVENTION_IDENTIFIER", '"Gdakon"'
     }
 
     kotlinOptions {

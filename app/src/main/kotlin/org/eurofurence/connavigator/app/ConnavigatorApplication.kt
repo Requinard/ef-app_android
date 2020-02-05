@@ -47,12 +47,6 @@ class ConnavigatorApplication : MultiDexApplication() {
         // Set up notificatioChannels
         NotificationFactory(applicationContext).setupChannels()
 
-        // Listen to cloud updates
-        PushListenerService().subscribe()
-
-        // Report token
-        InstanceIdService().reportToken()
-
         // Icons
         Iconify.with(FontAwesomeModule())
 
