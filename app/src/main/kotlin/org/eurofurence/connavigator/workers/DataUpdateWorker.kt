@@ -61,7 +61,7 @@ class DataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worke
             info { "Retrieving sync since $date" }
             // Get sync from server
 
-            forcedSync(showToastOnCompletion)
+           // forcedSync(showToastOnCompletion)
         } catch (ex: Throwable) {
             warn("Error occured during update", ex)
             BackgroundPreferences.loadingState = LoadingState.FAILED

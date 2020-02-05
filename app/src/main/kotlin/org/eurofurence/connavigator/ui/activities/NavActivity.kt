@@ -229,8 +229,8 @@ class NavActivity : AppCompatActivity(), NavHost, AnkoLogger, HasDb {
                 noButton { }
             }.show().let { true }
             R.id.navMessages -> navigateToMessages()
-            R.id.navWebSite -> browse("https://eurofurence.org")
-            R.id.navWebTwitter -> browse("https://twitter.com/eurofurence")
+            R.id.navWebSite -> browse("https://gdakon.org")
+            R.id.navWebTwitter -> browse("https://twitter.com/GdakonPL")
             R.id.navFursuitGames -> navigateToFursuitGames()
             R.id.navAdditionalServices -> navigateToAdditionalServices()
             else -> item.onNavDestinationSelected(navController) || super.onOptionsItemSelected(item)
