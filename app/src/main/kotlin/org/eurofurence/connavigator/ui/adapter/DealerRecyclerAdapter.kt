@@ -1,22 +1,21 @@
 package org.eurofurence.connavigator.ui.adapter
 
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.RecyclerView
+import androidx.fragment.app.Fragment
+import androidx.core.content.ContextCompat
 import android.view.Gravity
 import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
-import androidx.navigation.fragment.NavHostFragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.RecyclerView
 import com.joanzapata.iconify.widget.IconTextView
 import io.swagger.client.model.DealerRecord
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.Db
 import org.eurofurence.connavigator.database.HasDb
-import org.eurofurence.connavigator.net.imageService
+import org.eurofurence.connavigator.services.ImageService
 import org.eurofurence.connavigator.ui.dialogs.DealerDialog
 import org.eurofurence.connavigator.ui.fragments.DealerListFragmentDirections
 import org.eurofurence.connavigator.util.delegators.view
@@ -28,7 +27,7 @@ import org.jetbrains.anko.*
 /**
  * Created by David on 15-5-2016.
  */
-class DealerDataHolder(itemView: View?) : RecyclerView.ViewHolder(itemView) {
+class DealerDataHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
     val dealerName: TextView by view()
     val dealerSubText: TextView by view()
     val dealerPreviewImage: ImageView by view()
@@ -57,11 +56,12 @@ class DealerRecyclerAdapter(private val effective_events: List<DealerRecord>, ov
 
         // If no dealer preview was provided, load the YCH icon
         if (dealer[toThumbnail] != null) {
-            imageService.load(dealer[toThumbnail], holder.dealerPreviewImage, false)
+            ImageService.load(dealer[toThumbnail], holder.dealerPreviewImage, false)
         } else {
             fragment.context?.let {
                 holder.dealerPreviewImage.setImageDrawable(
-                        ContextCompat.getDrawable(it, R.drawable.dealer_black))
+                        ContextCompat.getDrawable(it, R.drawable.dealer_frame))
+
             }
         }
 
@@ -79,7 +79,7 @@ class DealerRecyclerAdapter(private val effective_events: List<DealerRecord>, ov
 
         holder.layout.setOnClickListener {
             val action = DealerListFragmentDirections
-                    .actionFragmentViewDealersToFragmentViewDealer(dealer.id.toString())
+                    .actionFragmentViewDealersToFragmentViewDealer(dealer.id.toString(), null)
             fragment.findNavController().navigate(action)
         }
 
@@ -99,10 +99,10 @@ class DealerListItemUI : AnkoComponent<ViewGroup> {
 
         linearLayout {
             lparams(matchParent, wrapContent)
-            backgroundResource = R.color.cardview_light_background
+            backgroundResource = R.color.lightBackground
             id = R.id.layout
             weightSum = 100F
-            padding = dip(10)
+            horizontalPadding = dip(10)
 
             verticalLayout {
                 imageView {

@@ -3,35 +3,35 @@ package org.eurofurence.connavigator.ui.fragments
 import android.graphics.*
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.constraint.ConstraintLayout
-import android.support.constraint.ConstraintSet
-import android.support.constraint.ConstraintSet.END
-import android.support.constraint.ConstraintSet.START
-import android.support.v4.app.Fragment
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
-import android.widget.Button
-import android.widget.ImageView
-import android.widget.LinearLayout
-import android.widget.TextView
+import android.widget.*
+import androidx.constraintlayout.widget.ConstraintLayout
+import androidx.constraintlayout.widget.ConstraintSet.END
+import androidx.constraintlayout.widget.ConstraintSet.START
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.findNavController
+import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.joanzapata.iconify.widget.IconTextView
+import com.pawegio.kandroid.runDelayed
 import io.reactivex.disposables.Disposables
 import io.swagger.client.model.DealerRecord
 import io.swagger.client.model.MapEntryRecord
 import io.swagger.client.model.MapRecord
 import nl.komponents.kovenant.ui.failUi
 import nl.komponents.kovenant.ui.successUi
+import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.findLinkFragment
 import org.eurofurence.connavigator.database.lazyLocateDb
-import org.eurofurence.connavigator.net.imageService
-import org.eurofurence.connavigator.tracking.Analytics
-import org.eurofurence.connavigator.tracking.Analytics.Action
-import org.eurofurence.connavigator.tracking.Analytics.Category
+import org.eurofurence.connavigator.services.ImageService
+import org.eurofurence.connavigator.services.AnalyticsService
+import org.eurofurence.connavigator.services.AnalyticsService.Action
+import org.eurofurence.connavigator.services.AnalyticsService.Category
 import org.eurofurence.connavigator.util.extensions.*
 import org.eurofurence.connavigator.util.v2.compatAppearance
 import org.eurofurence.connavigator.util.v2.get
@@ -39,44 +39,58 @@ import org.eurofurence.connavigator.util.v2.plus
 import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.alert
 import org.jetbrains.anko.support.v4.browse
 import org.jetbrains.anko.support.v4.px2dip
-import java.lang.Exception
 import java.util.*
 
-class DealerItemFragment : Fragment(), HasDb, AnkoLogger {
-    private val dealerId get() = try {
-        UUID.fromString(DealerItemFragmentArgs.fromBundle(arguments).dealerId)
-    } catch (e: Exception) {
-        null
-    }
+class DealerItemFragment : DisposingFragment(), HasDb, AnkoLogger {
+    private val args: DealerItemFragmentArgs by navArgs()
+    private val dealerId by lazy { UUID.fromString(args.dealerId) }
 
     val ui by lazy { DealerUi() }
 
     override val db by lazyLocateDb()
 
-    var subscriptions = Disposables.empty()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             UI { ui.createView(this) }.view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        subscriptions += db.subscribe {
+        if (args.CID != null && !args.CID.equals(BuildConfig.CONVENTION_IDENTIFIER, true)) {
+            alert("This item is not for this convention", "Wrong convention!").show()
+
+            findNavController().popBackStack()
+        }
+
+        db.subscribe {
             fillUi()
+        }
+        .collectOnDestroyView()
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        ui.scrollview?.also { sv ->
+            outState.putInt("sv_key_x", sv.scrollX)
+            outState.putInt("sv_key_y", sv.scrollY)
         }
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.dispose()
-        subscriptions = Disposables.empty()
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        runDelayed(200) {
+            ui.scrollview?.also { sv ->
+                savedInstanceState?.getInt("sv_key_x")?.let(sv::setScrollX)
+                savedInstanceState?.getInt("sv_key_y")?.let(sv::setScrollY)
+            }
+        }
     }
 
     private fun fillUi() {
         if (dealerId != null) {
             val dealer: DealerRecord = db.dealers[dealerId] ?: return
 
-            Analytics.event(Category.DEALER, Action.OPENED, dealer.displayName
+            AnalyticsService.event(Category.DEALER, Action.OPENED, dealer.displayName
                     ?: dealer.attendeeNickname)
 
             // Retrieve top image
@@ -84,13 +98,13 @@ class DealerItemFragment : Fragment(), HasDb, AnkoLogger {
 
             // Set image on top
             if (image != null) {
-                imageService.load(image, ui.primaryImage, false)
+                ImageService.load(image, ui.primaryImage, false)
             } else {
                 ui.primaryImage.visibility = View.GONE
             }
 
             // Load art preview image
-            imageService.load(dealer[toPreview], ui.artPreview)
+            ImageService.load(dealer[toPreview], ui.artPreview)
 
             ui.artPreviewCaption.text = dealer.artPreviewCaption
 
@@ -113,6 +127,7 @@ class DealerItemFragment : Fragment(), HasDb, AnkoLogger {
                         getString(R.string.dealer_artist_did_not_supply_a_description)
                     else
                         dealer.aboutTheArtistText
+
 
             if (dealer.artPreviewImageId == null) {
                 ui.artPreview.visibility = View.GONE
@@ -163,7 +178,7 @@ class DealerItemFragment : Fragment(), HasDb, AnkoLogger {
             val ox = (entry.x ?: 0) - x
             val oy = (entry.y ?: 0) - y
 
-            imageService.preload(mapImage) successUi {
+            ImageService.preload(mapImage) successUi {
                 if (it == null)
                     ui.map.visibility = View.GONE
                 else {
@@ -253,6 +268,7 @@ class DealerItemFragment : Fragment(), HasDb, AnkoLogger {
 }
 
 class DealerUi : AnkoComponent<Fragment> {
+    var scrollview: ScrollView? = null
     lateinit var primaryImage: PhotoView
     lateinit var name: TextView
     lateinit var nameSecond: TextView
@@ -278,10 +294,8 @@ class DealerUi : AnkoComponent<Fragment> {
     override fun createView(ui: AnkoContext<Fragment>) = with(ui) {
         relativeLayout {
             backgroundResource = R.color.backgroundGrey
-            scrollView {
+            scrollview = scrollView {
                 verticalLayout {
-                    textView("fabduawbdabdw dgavgwd hawdjw adg awjhd jwha dawdkawdkawda HAHA TURNS OUT THSI TEXT WAS NOT LONG ENOUGH FOR OTHER DEVICES CAN YOU IMAGINE THAT?").lparams(matchParent, dip(1))
-
                     lparams(matchParent, matchParent)
 
                     verticalLayout {
@@ -363,7 +377,7 @@ class DealerUi : AnkoComponent<Fragment> {
                     }
 
                     locationContainer = verticalLayout {
-                        backgroundResource = R.color.cardview_light_background
+                        backgroundResource = R.color.lightBackground
                         textView {
                             textResource = R.string.dealer_location_and_availability
                             compatAppearance = R.style.TextAppearance_AppCompat_Medium
@@ -377,7 +391,7 @@ class DealerUi : AnkoComponent<Fragment> {
                             map = photoView {
                                 id = R.id.dealer_map
 
-                                backgroundResource = R.color.cardview_dark_background
+                                backgroundResource = R.color.darkBackground
                                 minimumScale = 1F
                                 mediumScale = 2.5F
                                 maximumScale = 5F
@@ -385,7 +399,7 @@ class DealerUi : AnkoComponent<Fragment> {
                                 imageResource = R.drawable.placeholder_event
                             }
 
-                            ConstraintSet().apply {
+                            androidx.constraintlayout.widget.ConstraintSet().apply {
                                 connect(R.id.dealer_map, START, R.id.dealer_container, START)
                                 connect(R.id.dealer_map, END, R.id.dealer_container, END)
                                 setDimensionRatio(R.id.dealer_map, "1:1")
@@ -396,12 +410,12 @@ class DealerUi : AnkoComponent<Fragment> {
                             padding = dip(10)
                             availableDaysText = fontAwesomeView {
                                 text = "{fa-exclamation-triangle 24sp} ${resources.getString(R.string.dealer_only_present_on)}"
-                                compatAppearance = R.style.Base_TextAppearance_AppCompat_Medium
+                                compatAppearance = R.style.TextAppearance_AppCompat_Medium
                             }
 
                             afterDarkText = fontAwesomeView {
                                 text = "{fa-moon-o 24sp} ${resources.getString(R.string.dealer_located_in_the_after_dark)}"
-                                compatAppearance = R.style.Base_TextAppearance_AppCompat_Medium
+                                compatAppearance = R.style.TextAppearance_AppCompat_Medium
                             }
                         }
                     }.lparams(matchParent, wrapContent) {
@@ -412,9 +426,7 @@ class DealerUi : AnkoComponent<Fragment> {
                     verticalLayout {
                         // artist
                         padding = dip(20)
-                        backgroundResource = R.color.cardview_light_background
-
-                        visibility = View.GONE
+                        backgroundResource = R.color.lightBackground
                         textView {
                             textResource = R.string.dealer_about_artist
                             compatAppearance = R.style.TextAppearance_AppCompat_Medium
@@ -431,7 +443,7 @@ class DealerUi : AnkoComponent<Fragment> {
 
                     aboutArtContainer = verticalLayout {
                         padding = dip(20)
-                        backgroundResource = R.color.cardview_light_background
+                        backgroundResource = R.color.lightBackground
 
                         textView {
                             textResource = R.string.dealer_about_art
@@ -448,7 +460,7 @@ class DealerUi : AnkoComponent<Fragment> {
                             topPadding = dip(10)
 
                             artPreview = photoView {
-                                backgroundResource = R.color.cardview_dark_background
+                                backgroundResource = R.color.darkBackground
                                 lparams(matchParent, wrapContent)
                                 scaleType = ImageView.ScaleType.FIT_CENTER
                                 adjustViewBounds = true

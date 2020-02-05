@@ -3,16 +3,18 @@
 package org.eurofurence.connavigator.ui.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.LinearLayoutManager
-import android.support.v7.widget.RecyclerView
-import android.support.v7.widget.Toolbar
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.*
+import androidx.appcompat.widget.Toolbar
+import androidx.fragment.app.Fragment
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.LinearLayoutManager
+import androidx.recyclerview.widget.RecyclerView
 import com.google.firebase.perf.metrics.AddTrace
+import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.textWatcher
 import io.swagger.client.model.DealerRecord
 import org.eurofurence.connavigator.R
@@ -20,8 +22,10 @@ import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.lazyLocateDb
 import org.eurofurence.connavigator.ui.adapter.DealerRecyclerAdapter
 import org.eurofurence.connavigator.util.extensions.recycler
+import org.eurofurence.connavigator.util.extensions.setFAIcon
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
+import org.jetbrains.anko.support.v4.act
 
 /**
  * Created by David on 15-5-2016.
@@ -30,6 +34,7 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
     override val db by lazyLocateDb()
 
     val ui by lazy { DealersUi() }
+    val layoutManager get() = ui.dealerList?.layoutManager
     private var effectiveDealers = emptyList<DealerRecord>()
 
     var searchText = ""
@@ -44,9 +49,9 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
 
         info { "Rendering ${effectiveDealers.size} dealers out of ${db.dealers.items.size}" }
 
-        ui.dealerList.adapter = DealerRecyclerAdapter(effectiveDealers, db, this)
-        ui.dealerList.layoutManager = LinearLayoutManager(activity)
-        ui.dealerList.itemAnimator = DefaultItemAnimator()
+        ui.dealerList?.adapter = DealerRecyclerAdapter(effectiveDealers, db, this)
+        ui.dealerList?.layoutManager = LinearLayoutManager(activity)
+        ui.dealerList?.itemAnimator = DefaultItemAnimator()
 
         val distinctCategories = dealers.items
                 .map { it.categories ?: emptyList() }
@@ -54,7 +59,7 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
                 .sorted()
 
         ui.categorySpinner.adapter =
-                ArrayAdapter<String>(context, android.R.layout.simple_spinner_dropdown_item,
+                ArrayAdapter<String>(this.act, android.R.layout.simple_spinner_dropdown_item,
                         listOf("All Categories").plus(distinctCategories))
 
         ui.categorySpinner.onItemSelectedListener = object : AdapterView.OnItemSelectedListener {
@@ -74,6 +79,7 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
         ui.search.textWatcher {
             afterTextChanged { text -> searchText = text.toString(); updateFilter() }
         }
+
     }
 
     override fun onResume() {
@@ -83,12 +89,33 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
             this.findViewById<Toolbar>(R.id.toolbar).apply {
                 this.menu.clear()
                 this.inflateMenu(R.menu.dealer_list_menu)
+                this.context?.let {
+                    this.menu.setFAIcon(it, R.id.action_search, R.string.fa_search_solid, white = true)
+                }
                 this.setOnMenuItemClickListener {
                     when (it.itemId) {
                         R.id.action_search -> onSearchButtonClick()
                     }
                     true
                 }
+            }
+        }
+    }
+
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        layoutManager?.also { lm ->
+            outState.putParcelable("lm_key", lm.onSaveInstanceState())
+        }
+    }
+
+    override fun onActivityCreated(savedInstanceState: Bundle?) {
+        super.onActivityCreated(savedInstanceState)
+        layoutManager?.also { lm ->
+            runDelayed(200) {
+                savedInstanceState
+                        ?.getParcelable<Parcelable>("lm_key")
+                        ?.let(lm::onRestoreInstanceState)
             }
         }
     }
@@ -123,8 +150,9 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
                 it.categories?.contains(searchCategory) ?: false
             }
 
-        ui.dealerList.adapter = DealerRecyclerAdapter(sortDealers(effectiveDealers), db, this)
-        ui.dealerList.adapter.notifyDataSetChanged()
+        ui.dealerList?.adapter = DealerRecyclerAdapter(sortDealers(effectiveDealers), db, this).also {
+            it.notifyDataSetChanged()
+        }
     }
 
     private fun sortDealers(dealers: Iterable<DealerRecord>): List<DealerRecord> =
@@ -134,6 +162,7 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
         if (ui.searchLayout.visibility == View.GONE) {
             info { "Showing search bar" }
             ui.searchLayout.visibility = View.VISIBLE
+            ui.search.requestFocus()
         } else {
             info { "Hiding search bar" }
             ui.searchLayout.visibility = View.GONE
@@ -141,14 +170,10 @@ class DealerListFragment : Fragment(), HasDb, AnkoLogger {
             updateFilter()
         }
     }
-
-    fun dataUpdated() {
-        ui.dealerList.adapter = DealerRecyclerAdapter(sortDealers(dealers.items), db, this)
-    }
 }
 
 class DealersUi : AnkoComponent<Fragment> {
-    lateinit var dealerList: RecyclerView
+    var dealerList: RecyclerView? = null
     lateinit var search: EditText
     lateinit var searchLayout: LinearLayout
     lateinit var categorySpinner: Spinner
@@ -193,6 +218,9 @@ class DealersUi : AnkoComponent<Fragment> {
 
             dealerList = recycler {
                 lparams(matchParent, matchParent)
+                verticalPadding = dip(10)
+                clipToPadding = false
+                backgroundResource = R.color.lightBackground
             }
         }
     }

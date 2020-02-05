@@ -1,7 +1,7 @@
 package org.eurofurence.connavigator.ui.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -10,8 +10,8 @@ import android.widget.Button
 import android.widget.LinearLayout
 import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.R
-import org.eurofurence.connavigator.net.imageService
-import org.eurofurence.connavigator.pref.RemotePreferences
+import org.eurofurence.connavigator.services.ImageService
+import org.eurofurence.connavigator.preferences.RemotePreferences
 import org.eurofurence.connavigator.util.extensions.markdownView
 import org.eurofurence.connavigator.util.extensions.now
 import org.eurofurence.connavigator.util.v2.compatAppearance
@@ -56,7 +56,7 @@ class AboutUi : AnkoComponent<Fragment> {
             verticalLayout {
 
                 linearLayout {
-                    backgroundResource = R.color.cardview_light_background
+                    backgroundResource = R.color.lightBackground
                     padding = dip(20)
                     weightSum = 10f
 
@@ -100,7 +100,7 @@ class AboutUi : AnkoComponent<Fragment> {
                     requinardLayout = linearLayout {
                         setPadding(0, dip(10), 0, 0)
                         imageView {
-                            imageService.imageLoader.displayImage("https://en.gravatar.com/avatar/42d336e4b6f13d687c32eaaf9c8fb0ea?s=$avatarSize", this)
+                            ImageService.imageLoader.displayImage("https://en.gravatar.com/avatar/42d336e4b6f13d687c32eaaf9c8fb0ea?s=$avatarSize", this)
                         }.lparams(dip(75), dip(75))
 
                         textView {
@@ -114,7 +114,7 @@ class AboutUi : AnkoComponent<Fragment> {
                     pazuzuLayout = linearLayout {
                         setPadding(0, dip(10), 0, 0)
                         imageView {
-                            imageService.imageLoader.displayImage("https://en.gravatar.com/avatar/a5db6ad5350a2ee91408120b94d9fa24?s=$avatarSize", this)
+                            ImageService.imageLoader.displayImage("https://en.gravatar.com/avatar/a5db6ad5350a2ee91408120b94d9fa24?s=$avatarSize", this)
                         }.lparams(dip(75), dip(75))
 
                         textView {
@@ -130,7 +130,7 @@ class AboutUi : AnkoComponent<Fragment> {
 
                 verticalLayout {
                     padding = dip(20)
-                    backgroundResource = R.color.cardview_light_background
+                    backgroundResource = R.color.lightBackground
 
                     markdownView {
                         lparams(matchParent, wrapContent)

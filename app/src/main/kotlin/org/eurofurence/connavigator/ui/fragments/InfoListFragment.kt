@@ -1,7 +1,7 @@
 package org.eurofurence.connavigator.ui.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -19,11 +19,9 @@ import org.jetbrains.anko.support.v4.withArguments
 // TODO req: fix build
 // TODO req: add state saving
 
-class InfoListFragment : Fragment(), HasDb{
+class InfoListFragment : DisposingFragment(), HasDb{
     override val db by lazyLocateDb()
     val ui = ViewInfoGroupsUi()
-
-    var subscriptions = Disposables.empty()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             UI { ui.createView(this) }.view
@@ -32,9 +30,10 @@ class InfoListFragment : Fragment(), HasDb{
         super.onViewCreated(view, savedInstanceState)
 
         fillUi()
-        subscriptions += db.subscribe {
+        db.subscribe {
             fillUi()
         }
+        .collectOnDestroyView()
     }
 
     private fun fillUi() {
@@ -45,7 +44,7 @@ class InfoListFragment : Fragment(), HasDb{
                 .map { it.id.toString() }
                 .map { childFragmentManager.findFragmentByTag(it) }
                 .filter { it != null }
-                .forEach { transaction.remove(it) }
+                .forEach { transaction.remove(it!!) }
 
         // create new instances
         db.knowledgeGroups.items
@@ -54,12 +53,6 @@ class InfoListFragment : Fragment(), HasDb{
                 .forEach { transaction.add(R.id.info_group_container, it.first, it.second) }
 
         transaction.commit()
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.dispose()
-        subscriptions = Disposables.empty()
     }
 }
 

@@ -1,26 +1,32 @@
 package org.eurofurence.connavigator.ui.fragments
 
 import android.os.Bundle
-import android.support.design.widget.TabLayout
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v4.view.PagerAdapter
-import android.support.v4.view.ViewPager
-import android.support.v7.widget.Toolbar
+import android.os.Parcelable
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.view.inputmethod.InputMethodManager
 import android.widget.EditText
+import androidx.appcompat.widget.Toolbar
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.viewpager.widget.PagerAdapter
+import androidx.viewpager.widget.ViewPager
+import com.google.android.material.tabs.TabLayout
+import com.pawegio.kandroid.runDelayed
 import com.pawegio.kandroid.textWatcher
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.lazyLocateDb
-import org.eurofurence.connavigator.pref.BackgroundPreferences
+import org.eurofurence.connavigator.preferences.BackgroundPreferences
 import org.eurofurence.connavigator.ui.adapter.DayEventPagerAdapter
 import org.eurofurence.connavigator.ui.adapter.FavoriteEventPagerAdapter
 import org.eurofurence.connavigator.ui.adapter.RoomEventPagerAdapter
 import org.eurofurence.connavigator.ui.adapter.TrackEventPagerAdapter
+import org.eurofurence.connavigator.ui.filters.FilterByTitle
+import org.eurofurence.connavigator.ui.filters.OrderDayAndTime
+import org.eurofurence.connavigator.ui.filters.then
+import org.eurofurence.connavigator.util.extensions.setFAIcon
 import org.jetbrains.anko.*
 import org.jetbrains.anko.design.tabLayout
 import org.jetbrains.anko.support.v4.UI
@@ -30,18 +36,21 @@ import org.jetbrains.anko.support.v4.viewPager
 /**
  * Created by David on 5/3/2016.
  */
-class EventListFragment : Fragment(), HasDb {
+class EventListFragment : Fragment(), HasDb, AnkoLogger {
     override val db by lazyLocateDb()
 
     val ui = EventListUi()
 
-    private val searchFragment by lazy { EventRecyclerFragment().withArguments(daysInsteadOfGlyphs = true) }
+    private val searchFragment by lazy {
+        EventRecyclerFragment()
+                .withArguments(daysInsteadOfGlyphs = true)
+    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? =
             UI { ui.createView(this) }.view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        configureViewpager()
+        changePagerAdapter(BackgroundPreferences.eventPagerMode)
 
         childFragmentManager.beginTransaction()
                 .replace(R.id.eventSearch, searchFragment)
@@ -49,26 +58,10 @@ class EventListFragment : Fragment(), HasDb {
 
         ui.search.textWatcher {
             afterTextChanged { text ->
-                searchFragment.eventList.byTitle(text.toString())
-                        .sortByDateAndTime()
-                searchFragment.dataUpdated()
+                searchFragment.apply {
+                    filters = FilterByTitle(text.toString()) then OrderDayAndTime()
+                }.dataUpdated()
             }
-        }
-    }
-
-
-    private fun configureViewpager() {
-        changePagerAdapter(BackgroundPreferences.eventPagerMode)
-    }
-
-    private fun changePagerAdapter(adapter: PagerAdapter, preferredPosition: Int? = null) {
-        ui.pager.adapter = adapter
-        adapter.notifyDataSetChanged()
-
-        ui.tabs.setupWithViewPager(ui.pager)
-
-        preferredPosition?.let {
-            ui.pager.setCurrentItem(it, false)
         }
     }
 
@@ -79,20 +72,40 @@ class EventListFragment : Fragment(), HasDb {
         else -> changePagerAdapter(DayEventPagerAdapter(db, childFragmentManager), DayEventPagerAdapter.indexOfToday(db))
     }.apply { BackgroundPreferences.eventPagerMode = mode }
 
+
+    private fun changePagerAdapter(adapter: PagerAdapter, preferredPosition: Int? = null) {
+        ui.pager.adapter = adapter
+        ui.tabs.setupWithViewPager(ui.pager)
+
+        preferredPosition?.let {
+            ui.pager.setCurrentItem(it, false)
+        }
+    }
+
     override fun onResume() {
         super.onResume()
         activity?.apply {
             this.findViewById<Toolbar>(R.id.toolbar).apply {
-                this.menu.clear()
-                this.inflateMenu(R.menu.event_list_menu)
-                this.setOnMenuItemClickListener {
-                    when (it.itemId) {
-                        R.id.action_filter -> onFilterButtonClick()
-                        R.id.action_search -> onSearchButtonClick()
-                    }
+                createMenu(this)
+                true
+            }
+        }
+    }
 
-                    true
-                }
+    fun createMenu(toolbar: Toolbar) {
+        toolbar.menu.clear()
+        toolbar.inflateMenu(R.menu.event_list_menu)
+        context?.apply {
+            toolbar.menu.apply {
+                this.setFAIcon(context!!, R.id.action_filter, R.string.fa_filter_solid, white = true)
+                this.setFAIcon(context!!, R.id.action_search, R.string.fa_search_solid, white = true)
+            }
+        }
+        toolbar.setOnMenuItemClickListener {
+            when (it.itemId) {
+                R.id.action_filter -> onFilterButtonClick().let { true }
+                R.id.action_search -> onSearchButtonClick().let { true }
+                else -> false
             }
         }
     }
@@ -123,7 +136,7 @@ class EventListFragment : Fragment(), HasDb {
                 ui.tabs.visibility = View.GONE
 
                 ui.searchLayout.visibility = View.VISIBLE
-                ui.searchLayout.requestFocus()
+                ui.search.requestFocus()
 
                 activity!!.inputMethodManager
                         .toggleSoftInput(InputMethodManager.SHOW_IMPLICIT, InputMethodManager.HIDE_IMPLICIT_ONLY)
@@ -147,6 +160,7 @@ class EventListFragment : Fragment(), HasDb {
         }
     }
 }
+
 
 enum class EventPagerMode {
     DAYS,
@@ -172,12 +186,18 @@ class EventListUi : AnkoComponent<Fragment> {
             }.lparams(matchParent, wrapContent)
 
             pager = viewPager {
-                id = 1
+                id = R.id.eventListPager
+                //offscreenPageLimit = 1
             }.lparams(matchParent, matchParent)
 
             scrollView {
                 verticalLayout {
-                    search = editText().lparams(matchParent, wrapContent)
+                    search = editText {
+                        hint = "Search for an event title"
+                        singleLine = true
+                    }.lparams(matchParent, wrapContent) {
+                        margin = dip(10)
+                    }
 
                     searchLayout = linearLayout() {
                         id = R.id.eventSearch

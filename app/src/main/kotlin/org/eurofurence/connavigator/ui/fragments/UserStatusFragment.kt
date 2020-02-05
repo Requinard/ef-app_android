@@ -1,121 +1,148 @@
 package org.eurofurence.connavigator.ui.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import io.reactivex.Observable
 import io.reactivex.android.schedulers.AndroidSchedulers
 import io.reactivex.disposables.Disposables
-import nl.komponents.kovenant.task
-import nl.komponents.kovenant.ui.successUi
+import io.reactivex.functions.BiFunction
+import io.swagger.client.model.PrivateMessageRecord
 import org.eurofurence.connavigator.R
-import org.eurofurence.connavigator.gcm.cancelFromRelated
-import org.eurofurence.connavigator.pref.AuthPreferences
+import org.eurofurence.connavigator.database.HasDb
+import org.eurofurence.connavigator.database.lazyLocateDb
+import org.eurofurence.connavigator.notifications.cancelFromRelated
+import org.eurofurence.connavigator.preferences.AuthPreferences
+import org.eurofurence.connavigator.preferences.Authentication
+import org.eurofurence.connavigator.services.PMService
 import org.eurofurence.connavigator.util.extensions.fontAwesomeView
 import org.eurofurence.connavigator.util.v2.compatAppearance
 import org.eurofurence.connavigator.util.v2.plus
-import org.eurofurence.connavigator.webapi.apiService
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
 import java.util.*
-import kotlin.concurrent.fixedRateTimer
 
-class UserStatusFragment : Fragment(), AnkoLogger {
+class UserStatusFragment : DisposingFragment(), AnkoLogger, HasDb {
     val ui = UserStatusUi()
+    override val db by lazyLocateDb()
 
-    private var timer: Timer? = null
-
-
-    var subscriptions = Disposables.empty()
-
-    private fun checkMessages() = task {
-        info { "Checking message counts" }
-        apiService.communications.let {
-            it.addHeader("Authorization", AuthPreferences.asBearer())
-            it.apiCommunicationPrivateMessagesGet()
-        }
-    } successUi { messages ->
-        context?.let {
-            it.notificationManager.apply {
-                for (m in messages)
-                    cancelFromRelated(m.id)
-            }
-
-            info { "Fetched messages, ${messages.count()} messages found" }
-
-            val unreadMessages = messages.filter { it.readDateTimeUtc == null }
-
-            if (unreadMessages.isNotEmpty()) {
-                info { "Unread messages are present! Giving attention." }
-                ui.subtitle.text = getString(R.string.message_you_have_unread_messages, unreadMessages.size)
-                ui.subtitle.textColor = ContextCompat.getColor(it, R.color.primaryDark)
-                ui.userIcon.textColor = ContextCompat.getColor(it, R.color.primaryDark)
-            } else {
-                info { "No unread messages found, displaying total message counts" }
-                ui.subtitle.text = getString(R.string.message_you_have_messages, messages.count())
-                ui.subtitle.textColor = ContextCompat.getColor(it, android.R.color.tertiary_text_dark)
-                ui.userIcon.textColor = ContextCompat.getColor(it, android.R.color.tertiary_text_dark)
-            }
-        }
-    }
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             UI { ui.createView(this) }.view
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
-        subscriptions += AuthPreferences
-                .observer
-                .observeOn(AndroidSchedulers.mainThread())
-                .subscribe {
-                    info { "Received from observable" }
-                    updateState()
-                }
+        // Subscribe to changes in authentication, i.e., login status and user name.
+        subscribeToAuthentication()
 
-        updateState()
+        // Subscribe to changes in PM availability.
+        subscribeToPMs()
+
+        // Subscriber to database changes
+        subscribeToDatabase()
     }
 
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.dispose()
-        subscriptions = Disposables.empty()
-
-        timer?.cancel()
-        info { "Check timer canceled" }
-    }
-
-    private fun updateState() {
-        info { "Updating status fragment" }
-        if (!AuthPreferences.isLoggedIn()) {
-            info { "User is not logged in" }
-            timer?.cancel()
+    private fun subscribeToDatabase() {
+        db.subscribe {
+            val state = it.state
+            val canLogin = state != null && state.toLowerCase() != "past"
 
             ui.apply {
-                title.textResource = R.string.login_not_logged_in
-                subtitle.textResource = R.string.login_tap_to_login
-                layout.setOnClickListener {
-                    findNavController().navigate(R.id.action_fragmentViewHome_to_loginActivity)
-                }
-            }
-
-        } else {
-            info { "User is logged in" }
-            timer?.cancel()
-            timer = fixedRateTimer(period = 60000L) {
-                checkMessages()
-            }
-            ui.apply {
-                title.text = getString(R.string.misc_welcome_user, AuthPreferences.username.capitalize())
-                layout.setOnClickListener {
-                    val action = FragmentViewHomeDirections.ActionFragmentViewHomeToFragmentViewMessageList()
-                    findNavController().navigate(action)
-                }
+                layout.visibility = if (canLogin) View.VISIBLE else View.GONE
             }
         }
+        .collectOnDestroyView()
+    }
+
+    /**
+     * Subscribes to authentication changes to display proper information on the UI and to activate a periodic refresh
+     * of PMs.
+     */
+    private fun subscribeToAuthentication() {
+        AuthPreferences
+                .updated
+                .observeOn(AndroidSchedulers.mainThread())
+                .map { it.isLoggedIn to it.username }
+                .distinct()
+                .subscribe { (isLoggedIn, username) ->
+                    // React to user login changes.
+                    if (isLoggedIn) {
+                        // Log status change.
+                        info { "User is logged in" }
+
+                        // Display logged in, name and set UI action.
+                        ui.apply {
+                            title.text = getString(R.string.misc_welcome_user, username.capitalize())
+                            subtitle.textResource = R.string.login_tap_to_login
+                            layout.setOnClickListener {
+                                val action = HomeFragmentDirections.actionFragmentViewHomeToFragmentViewMessageList()
+                                findNavController().navigate(action)
+                            }
+                        }
+                    } else {
+                        // Log status change.
+                        info { "User is not logged in" }
+
+                        // Display not logged in, reset UI action.
+                        ui.apply {
+                            title.textResource = R.string.login_not_logged_in
+                            subtitle.textResource = R.string.login_tap_to_login
+                            layout.setOnClickListener {
+                                findNavController().navigate(R.id.action_fragmentViewHome_to_loginActivity)
+                            }
+                        }
+                    }
+                }
+                .collectOnDestroyView()
+    }
+
+    /**
+     * Subscribes to PM availability by displaying and cancelling notifications, as well as indicating the number
+     * of unread messages.
+     */
+    private fun subscribeToPMs() {
+
+        // Include update status in observable.
+        Observable.combineLatest(
+                AuthPreferences.updated, PMService.updated,
+                BiFunction { l: Authentication, r: Map<UUID, PrivateMessageRecord> ->
+                    l to r
+                })
+
+                // Use UI thread for subscription.
+                .observeOn(AndroidSchedulers.mainThread())
+
+                // React to authentication and messages status.
+                .subscribe { (auth, messages) ->
+                    if (auth.isLoggedIn)
+                        context?.apply {
+                            for ((_, m) in messages)
+                                notificationManager.cancelFromRelated(m.id)
+
+                            info { "Fetched messages, ${messages.count()} messages found" }
+
+                            val unreadMessages = messages.values.filter { it.readDateTimeUtc == null }
+
+                            if (unreadMessages.isNotEmpty()) {
+                                info { "Unread messages are present! Giving attention." }
+                                ui.subtitle.text = getString(R.string.message_you_have_unread_messages, unreadMessages.size)
+                                ui.subtitle.textColor = ContextCompat.getColor(this, R.color.primaryDark)
+                                ui.userIcon.textColor = ContextCompat.getColor(this, R.color.primaryDark)
+                            } else {
+                                info { "No unread messages found, displaying total message counts" }
+                                ui.subtitle.text = getString(R.string.message_you_have_messages, messages.count())
+                                ui.subtitle.textColor = ContextCompat.getColor(this, android.R.color.tertiary_text_dark)
+                                ui.userIcon.textColor = ContextCompat.getColor(this, android.R.color.tertiary_text_dark)
+                            }
+                        }
+                }
+                .collectOnDestroyView()
+
     }
 }
 
@@ -128,13 +155,14 @@ class UserStatusUi : AnkoComponent<Fragment> {
     override fun createView(ui: AnkoContext<Fragment>) = with(ui) {
         linearLayout {
             this@UserStatusUi.layout = this
+            visibility = View.GONE
             isClickable = true
 
             lparams(matchParent, wrapContent) {
                 setPadding(0, dip(20), 0, dip(20))
             }
             weightSum = 100F
-            backgroundResource = R.color.cardview_light_background
+            backgroundResource = R.color.lightBackground
 
             userIcon = fontAwesomeView {
                 text = "{fa-user 30sp}"

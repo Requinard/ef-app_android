@@ -1,8 +1,6 @@
 package org.eurofurence.connavigator.ui.fragments
 
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
@@ -11,16 +9,22 @@ import android.widget.Button
 import android.widget.ImageView
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
+import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import io.reactivex.disposables.Disposables
 import io.swagger.client.model.KnowledgeEntryRecord
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.lazyLocateDb
-import org.eurofurence.connavigator.net.imageService
-import org.eurofurence.connavigator.tracking.Analytics
+import org.eurofurence.connavigator.services.ImageService
+import org.eurofurence.connavigator.services.AnalyticsService
 import org.eurofurence.connavigator.ui.views.FontAwesomeTextView
-import org.eurofurence.connavigator.util.extensions.*
+import org.eurofurence.connavigator.util.extensions.fontAwesomeTextView
+import org.eurofurence.connavigator.util.extensions.markdownView
+import org.eurofurence.connavigator.util.extensions.photoView
+import org.eurofurence.connavigator.util.extensions.toUnicode
 import org.eurofurence.connavigator.util.v2.compatAppearance
 import org.eurofurence.connavigator.util.v2.plus
 import org.jetbrains.anko.*
@@ -33,19 +37,11 @@ import java.util.*
 /**
  * Views an info based on an ID passed to the intent
  */
-class InfoItemFragment : Fragment(), HasDb {
-    override val db by lazyLocateDb()
-
+class InfoItemFragment : DisposingFragment(), HasDb {
     val ui by lazy { InfoUi() }
-
-    var subscriptions = Disposables.empty()
-
-    val infoId
-        get() = try {
-            UUID.fromString(InfoItemFragmentArgs.fromBundle(arguments).itemId)
-        } catch (_: Exception) {
-            null
-        }
+    private val args: InfoItemFragmentArgs by navArgs()
+    private val infoId: UUID? by lazy { UUID.fromString(args.itemId) }
+    override val db by lazyLocateDb()
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             UI { ui.createView(this) }.view
@@ -54,13 +50,7 @@ class InfoItemFragment : Fragment(), HasDb {
         super.onViewCreated(view, savedInstanceState)
 
         fillUi()
-        subscriptions += db.subscribe { fillUi() }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.dispose()
-        subscriptions = Disposables.empty()
+        db.subscribe { fillUi() }.collectOnDestroyView()
     }
 
     private fun fillUi() {
@@ -68,10 +58,10 @@ class InfoItemFragment : Fragment(), HasDb {
             val knowledgeEntry: KnowledgeEntryRecord = db.knowledgeEntries[infoId] ?: return
             val knowledgeGroup = db.knowledgeGroups[knowledgeEntry.knowledgeGroupId] ?: return
 
-            Analytics.event(Analytics.Category.INFO, Analytics.Action.OPENED, knowledgeEntry.title)
+            AnalyticsService.event(AnalyticsService.Category.INFO, AnalyticsService.Action.OPENED, knowledgeEntry.title)
 
             if (knowledgeEntry.imageIds != null && knowledgeEntry.imageIds?.isNotEmpty() == true) {
-                imageService.load(db.images[knowledgeEntry.imageIds?.first()], ui.image, showHide = false)
+                ImageService.load(db.images[knowledgeEntry.imageIds?.first()], ui.image, hideIfNull = false)
             } else {
                 ui.image.visibility = View.GONE
             }
@@ -86,7 +76,7 @@ class InfoItemFragment : Fragment(), HasDb {
                 val button = Button(context)
                 button.text = url.name
                 button.setOnClickListener {
-                    Analytics.event(Analytics.Category.INFO, Analytics.Action.LINK_CLICKED, url.target)
+                    AnalyticsService.event(AnalyticsService.Category.INFO, AnalyticsService.Action.LINK_CLICKED, url.target)
                     browse(url.target)
                 }
 
@@ -137,7 +127,7 @@ class InfoUi : AnkoComponent<Fragment> {
 
                 linearLayout {
                     padding = dip(15)
-                    backgroundResource = R.color.cardview_light_background
+                    backgroundResource = R.color.lightBackground
 
                     text = markdownView {
                         lparams(matchParent, wrapContent)

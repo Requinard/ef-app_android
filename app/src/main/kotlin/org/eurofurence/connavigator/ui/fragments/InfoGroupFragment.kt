@@ -2,19 +2,20 @@ package org.eurofurence.connavigator.ui.fragments
 
 import android.animation.LayoutTransition
 import android.os.Bundle
-import android.support.v4.app.Fragment
-import android.support.v4.content.ContextCompat
-import android.support.v7.widget.DefaultItemAnimator
-import android.support.v7.widget.RecyclerView
 import android.view.Gravity
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
 import android.widget.LinearLayout
 import android.widget.TextView
+import androidx.core.content.ContextCompat
+import androidx.fragment.app.Fragment
 import androidx.navigation.fragment.findNavController
+import androidx.recyclerview.widget.DefaultItemAnimator
+import androidx.recyclerview.widget.RecyclerView
 import com.joanzapata.iconify.widget.IconTextView
 import io.reactivex.disposables.Disposables
+import org.eurofurence.connavigator.BuildConfig
 import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.lazyLocateDb
@@ -25,13 +26,12 @@ import org.eurofurence.connavigator.util.v2.compatAppearance
 import org.eurofurence.connavigator.util.v2.plus
 import org.jetbrains.anko.*
 import org.jetbrains.anko.support.v4.UI
-import org.jetbrains.anko.support.v4.longToast
 import java.util.*
 
 /**
  * Renders an info group element and displays it's individual items
  */
-class InfoGroupFragment : Fragment(), HasDb, AnkoLogger {
+class InfoGroupFragment : DisposingFragment(), HasDb, AnkoLogger {
     inner class InfoItemViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         val layout: LinearLayout by view("layout")
         val name: TextView by view("title")
@@ -48,8 +48,14 @@ class InfoGroupFragment : Fragment(), HasDb, AnkoLogger {
 
             holder.name.text = item.title
             holder.layout.setOnClickListener {
-                val action = InfoListFragmentDirections.actionInfoListFragment2ToInfoItemFragment(item.id.toString())
+                val action = InfoListFragmentDirections.actionInfoListFragmentToInfoItemFragment(item.id.toString(), BuildConfig.CONVENTION_IDENTIFIER)
                 findNavController().navigate(action)
+            }
+
+            holder.layout.setOnLongClickListener {
+                context?.let {
+                    context?.share(item.shareString(it), "Share Info")
+                } != null
             }
         }
     }
@@ -67,8 +73,6 @@ class InfoGroupFragment : Fragment(), HasDb, AnkoLogger {
 
     val ui = InfoGroupUi()
 
-    var subscriptions = Disposables.empty()
-
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
             UI { ui.createView(this) }.view
 
@@ -77,9 +81,10 @@ class InfoGroupFragment : Fragment(), HasDb, AnkoLogger {
 
         fillUi()
 
-        subscriptions += db.subscribe {
+        db.subscribe {
             fillUi()
         }
+        .collectOnDestroyView()
     }
 
     private fun fillUi() {
@@ -101,12 +106,6 @@ class InfoGroupFragment : Fragment(), HasDb, AnkoLogger {
                 groupLayout.visibility = View.GONE
             }
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.dispose()
-        subscriptions = Disposables.empty()
     }
 
     private fun setDropdown() {
@@ -135,7 +134,7 @@ class InfoGroupUi : AnkoComponent<Fragment> {
             groupLayout = linearLayout {
                 isClickable = true
                 weightSum = 20F
-                backgroundResource = R.color.cardview_light_background
+                backgroundResource = R.color.lightBackground
                 layoutTransition = LayoutTransition().apply {
                     enableTransitionType(LayoutTransition.APPEARING)
                     enableTransitionType(LayoutTransition.CHANGE_APPEARING)
@@ -153,8 +152,7 @@ class InfoGroupUi : AnkoComponent<Fragment> {
                 }
 
                 verticalLayout {
-                    topPadding = dip(20)
-                    bottomPadding = dip(20)
+                    verticalPadding = dip(15)
                     title = textView {
                         textResource = R.string.misc_title
                         compatAppearance = android.R.style.TextAppearance_DeviceDefault_Large

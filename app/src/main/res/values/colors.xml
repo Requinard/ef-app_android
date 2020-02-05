@@ -15,8 +15,19 @@
     <color name="primaryDark">#258BD3</color>
     <color name="primaryDarker">#0976C3</color>
 
-    <color name="textWhite">#dcdcdc</color>
-    <color name="textBlack">#111</color>
+    <color name="textWhite">#fff</color>
+    <color name="textBlack">#010101</color>
     <color name="backgroundGrey">#DDD</color>
+    <color name="mutedText">#999</color>
     <color name="alert">#FFE082</color>
+    <color name="iconColor">#666</color>
+    <color name="hamburgerColor">@color/textWhite</color>
+    <color name="darkBackground">#FF424242</color>
+    <color name="lightBackground">#FFFFFFFF</color>
+    <color name="error">#B02020</color>
+    <color name="errorBackground">#FF9999</color>
+    <color name="warningBackground">#FFDD99</color>
+    <color name="favorite">#f44336</color>
+    <color name="sponsor">#fbc02d</color>
+    <color name="supersponsor">#673ab7</color>
 </resources>

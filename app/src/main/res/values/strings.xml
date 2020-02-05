@@ -1,5 +1,5 @@
 <resources>
-    <string name="app_name">Con Navigator</string>
+    <string name="app_name">Eurofurence</string>
 
     <!-- Navigation -->
     <string name="navigation_drawer_open">Open navigation drawer</string>
@@ -57,7 +57,7 @@
     <string name="settings_debug_schedule_notifications">Schedule notifications for testing</string>
     <string name="settings_debug_schedule_notifications_summary">Schedules a notification in the near future for testing instead of actual event time</string>
 
-    <string name="settings_show_irrelevant_announcements">Show irrelevant announcements</string>
+    <string name="settings_show_irrelevant_announcements">Show expired announcements</string>
     <string name="settings_use_days_of_the_week">Use days of the week instead of actual dates.</string>
     <string name="settings_switch_short_and_long_press_for_events">Switch the short press and long press behaviour for events.</string>
     <string name="settings_immediately_close_app_on_back">Immediately close app on back button press</string>
@@ -68,7 +68,7 @@
     <string name="settings_tweak_event_days_so_it_seems_like_its_today">Tweak event days so it seems like it\'s the current date</string>
     <string name="settings_amount_of_days_to_offset_by">The amount of days to offset by. Must be integer</string>
     <string name="settings_amount_of_days_to_offset_event_schedule_by">Amount of days to offset the event schedule by</string>
-    <string name="settings_schedule_events_in_5_minutes">Schedule notifications in 5 minutes instead of event time</string>
+    <string name="settings_schedule_events_in_5_minutes">Schedule event reminders ASAP.</string>
     <!-- Settings end -->
 
     <!-- Action Bar -->
@@ -171,8 +171,9 @@
     <string name="login_password">Password</string>
     <string name="login_authenticating">Authenticating&#8230;</string>
     <string name="login_details">Login details</string>
-    <string name="login_logged_in_as">Logged in as %1$s</string>
-    <string name="login_valid_until">Login is valid until: %1$s</string>
+    <string name="login_logged_in_as">You are currently logged in as %1$s.</string>
+    <string name="login_benefits">While being logged in, you will receive personal notifications from Eurofurence on this device and you can use additional services that require authentication.</string>
+    <string name="login_valid_until">You will be automatically logged out in about %1$s.</string>
     <string name="login_logout">Logout</string>
     <string name="login_logged_out">Logging you out, goodbye!</string>
     <string name="login_not_logged_in">You\'re not logged in!</string>
@@ -181,6 +182,8 @@
     <string name="login_information">Your login credentials for the app are the same as for the Gdakon Registration System.</string>
     <string name="login_failed">Failed to log you in!</string>
     <string name="login_needed">You need to login before you can see private messages!</string>
+    <string name="login_privacy_notice">Privacy Notice</string>
+    <string name="login_telemetry_disclaimer">Eurofurence does not correlate logged in attendees on devices with application telemetry.</string>
     <!-- Login end -->
 
     <!-- Close -->
@@ -204,6 +207,7 @@
     <string name="misc_welcome_user">Welcome %1$s</string>
     <string name="misc_hello_player">Hello %1$s</string>
     <string name="misc_home">Home</string>
+    <string name="misc_home_title">Eurofurence 25 (Home)</string>
 
     <string name="misc_title">Title</string>
     <string name="misc_subtitle">Subtitle</string>
@@ -262,10 +266,15 @@
     <string name="misc_version_code">Version Code: %1$d</string>
     <string name="misc_version_detailed">Version %1$s (%2$d) / %3$s </string>
 
+    <string name="app_state_past">You\'re using an app version that connects to data of a past convention.\n\nAn updated version will be available several weeks before the next convention start date.\n\nLogging in with current credentials/registration details will not work.</string>
+    <string name="app_state_preview">You\'re using an app version that connects to preview data of an upcoming convention.\n\nPlease do not share any content and treat it as unofficial &amp; confidential.</string>
+
     <string name="misc_working_please_wait">Working&#8230; Please wait!</string>
     <string name="misc_android_developers">Android Developers</string>
 
     <string name="misc_concat_newline">%1$s\n%2$s</string>
+
+    <string name="misc_info_share">Learn about %1$s.\n%2$s</string>
     <!-- Misc end -->
 
     <!-- TODO: Remove or change this placeholder text -->
@@ -288,10 +297,28 @@
     <string name="info_list_title">Info List</string>
     <string name="info_item_title">Info Item</string>
 
+    <string name="event_feedback_thank">Thank you for your feedback!</string>
+    <string name="event_feedback_submit">submit</string>
+    <string name="event_feedback_comment_hint">Optional feedback for the convention organisation and/or the panelist</string>
+    <string name="event_feedback_comment_header">Anything else you would like us to know?</string>
+    <string name="event_feedback_rate_title">How would you rate this event?</string>
+    <string name="event_feedback_anonymous_help">Your feedback will be submitted anonymously. Any comments will be manually reviewed and may be forwarded to the host / panelist. Hateful language or insults will not be forwarded.</string>
+    <string name="navigation_drawer_item_additional_services">Additional Services</string>
+
     <array name="polling_intervals">
         <item>100</item>
         <item>75</item>
         <item>50</item>
         <item>25</item>
     </array>
+    <string name="loading_unititialized_title">Preparing the app for first use...</string>
+    <string name="loading_unitialized_description">Bear with us - this shouldn’t take long!</string>
+    <string name="loading_data_title">Updating your data...</string>
+    <string name="loading_data_description">You can use the app normally.</string>
+    <string name="loading_img_title">Caching content for offline use...</string>
+    <string name="loading_img_description">You can use the app normally.</string>
+    <string name="loading_failed_title">Preparing the app for first use...</string>
+    <string name="loading_failed_description">Oops! This didn’t work!</string>
+    <string name="loading_pending_title">Update pending</string>
+    <string name="loading_pending_description">Waiting for an internet connection...</string>
 </resources>

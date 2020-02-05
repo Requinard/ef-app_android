@@ -26,6 +26,8 @@
     <item name="announcementTitle" type="id"/>
     <item name="announcementContent" type="id"/>
 
+    <item name="eventListPager" type="id"/>
+
     <item name="eventSeparator" type="id"/>
     <item name="eventStartTime" type="id"/>
     <item name="eventGlyph" type="id"/>
@@ -43,4 +45,6 @@
     <item name="navDays" type="id" />
     <item name="navTitle" type="id" />
     <item name="navSubTitle" type="id" />
+    <item name="loadingWidget" type="id" />
+    <item name="appStatusWidget" type="id" />
 </resources>

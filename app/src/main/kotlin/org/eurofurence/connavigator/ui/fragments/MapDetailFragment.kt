@@ -6,7 +6,7 @@ import android.graphics.Color
 import android.graphics.Paint
 import android.graphics.drawable.BitmapDrawable
 import android.os.Bundle
-import android.support.v4.app.Fragment
+import androidx.fragment.app.Fragment
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
@@ -23,7 +23,7 @@ import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.findLinkFragment
 import org.eurofurence.connavigator.database.lazyLocateDb
-import org.eurofurence.connavigator.net.imageService
+import org.eurofurence.connavigator.services.ImageService
 import org.eurofurence.connavigator.util.extensions.photoView
 import org.eurofurence.connavigator.util.v2.compatAppearance
 import org.eurofurence.connavigator.util.v2.plus
@@ -32,13 +32,12 @@ import org.jetbrains.anko.support.v4.UI
 import org.jetbrains.anko.support.v4.px2dip
 import java.util.*
 
-class MapDetailFragment : Fragment(), HasDb, AnkoLogger {
+class MapDetailFragment : DisposingFragment(), HasDb, AnkoLogger {
     override val db by lazyLocateDb()
 
     val ui by lazy { MapDetailUi() }
     val id get() = arguments?.getString("id") ?: ""
     val showTitle get() = arguments!!.getBoolean("showTitle")
-    var subscriptions = Disposables.empty()
     private var linkFound = false
 
     override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?) =
@@ -47,16 +46,11 @@ class MapDetailFragment : Fragment(), HasDb, AnkoLogger {
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
 
-        subscriptions += db.subscribe {
+        db.subscribe {
             ui.title.visibility = if (showTitle) View.VISIBLE else View.GONE
             findLinkFragment()
         }
-    }
-
-    override fun onDestroyView() {
-        super.onDestroyView()
-        subscriptions.dispose()
-        subscriptions = Disposables.empty()
+        .collectOnDestroyView()
     }
 
     fun withArguments(id: UUID?, showTitle: Boolean = false) = apply {
@@ -95,8 +89,8 @@ class MapDetailFragment : Fragment(), HasDb, AnkoLogger {
             val ox = (entry.x ?: 0) - x
             val oy = (entry.y ?: 0) - y
 
-            imageService.preload(mapImage) successUi {
-                if (it == null)
+            ImageService.preload(mapImage) successUi {
+                if (it == null || activity == null)
                     ui.layout.visibility = View.GONE
                 else {
                     try {
@@ -138,14 +132,14 @@ class MapDetailUi : AnkoComponent<Fragment> {
         relativeLayout {
             lparams(matchParent, wrapContent)
             layout = verticalLayout {
-                backgroundResource = R.color.cardview_light_background
+                backgroundResource = R.color.lightBackground
                 title = textView {
                     textResource = R.string.misc_location
                     compatAppearance = android.R.style.TextAppearance_Small
                     padding = dip(20)
                 }
                 map = photoView {
-                    backgroundResource = R.color.cardview_dark_background
+                    backgroundResource = R.color.darkBackground
                     minimumScale = 1F
                     mediumScale = 2.5F
                     maximumScale = 5F

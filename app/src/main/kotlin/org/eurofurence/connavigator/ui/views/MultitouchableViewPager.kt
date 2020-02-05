@@ -1,10 +1,10 @@
 package org.eurofurence.connavigator.ui.views
 
 import android.content.Context
-import android.support.v4.view.ViewPager
+import androidx.viewpager.widget.ViewPager
 import android.util.AttributeSet
 import android.view.MotionEvent
-import org.eurofurence.connavigator.tracking.Analytics
+import org.eurofurence.connavigator.services.AnalyticsService
 
 class MultitouchableViewPager : ViewPager {
     constructor(context: Context, attrs: AttributeSet) : super(context, attrs)
@@ -14,7 +14,7 @@ class MultitouchableViewPager : ViewPager {
         try {
             return super.onTouchEvent(ev)
         } catch (ex: IllegalArgumentException) {
-            Analytics.ex(ex)
+            AnalyticsService.ex(ex)
         }
         return false
     }
@@ -23,7 +23,7 @@ class MultitouchableViewPager : ViewPager {
         try {
             return super.onInterceptTouchEvent(ev)
         } catch (ex: IllegalArgumentException) {
-            Analytics.ex(ex)
+            AnalyticsService.ex(ex)
         }
         return false
     }
