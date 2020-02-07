@@ -17,7 +17,6 @@ import androidx.navigation.fragment.navArgs
 import com.github.chrisbanes.photoview.PhotoView
 import com.joanzapata.iconify.widget.IconTextView
 import com.pawegio.kandroid.runDelayed
-import io.reactivex.disposables.Disposables
 import io.swagger.client.model.DealerRecord
 import io.swagger.client.model.MapEntryRecord
 import io.swagger.client.model.MapRecord
@@ -28,14 +27,13 @@ import org.eurofurence.connavigator.R
 import org.eurofurence.connavigator.database.HasDb
 import org.eurofurence.connavigator.database.findLinkFragment
 import org.eurofurence.connavigator.database.lazyLocateDb
-import org.eurofurence.connavigator.services.ImageService
 import org.eurofurence.connavigator.services.AnalyticsService
 import org.eurofurence.connavigator.services.AnalyticsService.Action
 import org.eurofurence.connavigator.services.AnalyticsService.Category
+import org.eurofurence.connavigator.services.ImageService
 import org.eurofurence.connavigator.util.extensions.*
 import org.eurofurence.connavigator.util.v2.compatAppearance
 import org.eurofurence.connavigator.util.v2.get
-import org.eurofurence.connavigator.util.v2.plus
 import org.jetbrains.anko.*
 import org.jetbrains.anko.custom.ankoView
 import org.jetbrains.anko.support.v4.UI
@@ -65,7 +63,7 @@ class DealerItemFragment : DisposingFragment(), HasDb, AnkoLogger {
         db.subscribe {
             fillUi()
         }
-        .collectOnDestroyView()
+                .collectOnDestroyView()
     }
 
     override fun onSaveInstanceState(outState: Bundle) {
@@ -307,6 +305,8 @@ class DealerUi : AnkoComponent<Fragment> {
                             lparams(matchParent, dip(300))
 
                         }
+
+                        textView("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA").lparams(matchParent, dip(1))
                         name = textView {
                             textResource = R.string.dealer_name
                             textAlignment = View.TEXT_ALIGNMENT_CENTER
@@ -377,6 +377,7 @@ class DealerUi : AnkoComponent<Fragment> {
                     }
 
                     locationContainer = verticalLayout {
+                        visibility = View.GONE
                         backgroundResource = R.color.lightBackground
                         textView {
                             textResource = R.string.dealer_location_and_availability
@@ -425,6 +426,7 @@ class DealerUi : AnkoComponent<Fragment> {
 
                     verticalLayout {
                         // artist
+                        visibility = View.GONE
                         padding = dip(20)
                         backgroundResource = R.color.lightBackground
                         textView {

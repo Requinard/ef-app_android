@@ -4,6 +4,7 @@ import android.content.Context
 import androidx.work.*
 import com.pawegio.kandroid.runOnUiThread
 import io.swagger.client.model.AggregatedDeltaResponse
+import io.swagger.client.model.ImageRecord
 import org.eurofurence.connavigator.database.Db
 import org.eurofurence.connavigator.database.RootDb
 import org.eurofurence.connavigator.preferences.BackgroundPreferences
@@ -104,10 +105,23 @@ class DataUpdateWorker(context: Context, workerParams: WorkerParameters) : Worke
             db.images.items = this
         }
 
+        loadImagesFromList(db.images.items)
+
         finishLoading(showToastOnCompletion)
     }
 
-    private fun loadImages(sync: AggregatedDeltaResponse) {
+    private fun loadImagesFromList(images: Collection<ImageRecord>) {
+        BackgroundPreferences.loadingState = LoadingState.LOADING_IMAGES
+        val workList = images.map { PreloadImageWorker.create(it) }
+        val workFinished = PreloadImageFinishedWorker.create()
+
+        WorkManager.getInstance(applicationContext)
+                .beginWith(workList)
+                .then(workFinished)
+                .enqueue()
+    }
+
+    private fun loadImagesfromDelta(sync: AggregatedDeltaResponse) {
         BackgroundPreferences.loadingState = LoadingState.LOADING_IMAGES
         val workList = sync.images.changedEntities.map { PreloadImageWorker.create(it) }
         val workFinished = PreloadImageFinishedWorker.create()

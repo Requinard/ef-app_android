@@ -172,7 +172,7 @@
     <string name="login_authenticating">Authenticating&#8230;</string>
     <string name="login_details">Login details</string>
     <string name="login_logged_in_as">You are currently logged in as %1$s.</string>
-    <string name="login_benefits">While being logged in, you will receive personal notifications from Eurofurence on this device and you can use additional services that require authentication.</string>
+    <string name="login_benefits">While being logged in, you will receive personal notifications from Gdakon on this device and you can use additional services that require authentication.</string>
     <string name="login_valid_until">You will be automatically logged out in about %1$s.</string>
     <string name="login_logout">Logout</string>
     <string name="login_logged_out">Logging you out, goodbye!</string>
@@ -183,7 +183,7 @@
     <string name="login_failed">Failed to log you in!</string>
     <string name="login_needed">You need to login before you can see private messages!</string>
     <string name="login_privacy_notice">Privacy Notice</string>
-    <string name="login_telemetry_disclaimer">Eurofurence does not correlate logged in attendees on devices with application telemetry.</string>
+    <string name="login_telemetry_disclaimer">Gdakon does not correlate logged in attendees on devices with application telemetry.</string>
     <!-- Login end -->
 
     <!-- Close -->
@@ -207,7 +207,7 @@
     <string name="misc_welcome_user">Welcome %1$s</string>
     <string name="misc_hello_player">Hello %1$s</string>
     <string name="misc_home">Home</string>
-    <string name="misc_home_title">Eurofurence 25 (Home)</string>
+    <string name="misc_home_title">Gdakon</string>
 
     <string name="misc_title">Title</string>
     <string name="misc_subtitle">Subtitle</string>
