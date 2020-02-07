@@ -32,7 +32,7 @@ class FragmentViewAbout : Fragment(){
         ui.requinardLayout.setOnClickListener { browse("https://furry.requinard.nl") }
         ui.pazuzuLayout.setOnClickListener { browse("https://twitter.com/Pazuzupizza") }
 
-        ui.helpButton.setOnClickListener { browse(RemotePreferences.supportChatUrl) }
+        ui.helpButton.setOnClickListener { browse("http://help.gdakon.org") }
         ui.bugButton.setOnClickListener { browse("https://github.com/eurofurence/ef-app_android/issues") }
     }
 }
@@ -136,35 +136,17 @@ class AboutUi : AnkoComponent<Fragment> {
                         lparams(matchParent, wrapContent)
                         isFocusable = false
                         loadMarkdown("""
-**iOS:**
+**API Development**
 
-- Fenrikur
-- Shez
-
-**Windows Mobile:**
-
-- Luchs
+- Lemurr
 
 **Program Management:**
 
-- Luchs
-- Zefiro
+- Tygris Blackstripe
 
-**Special Thanks:**
+**Artwork**
 
-- Akulatraxas
-- Aragon Tigerseye
-- Atkelar
-- Cairyn
-- Carenath Stormwind
-- Jul
-- Liam
-- NordicFuzzCon (Catch'em all)
-- Pattarchus
-- Snow-wolf
-- StreifiGreif
-- Xil
-- IceTiger
+- Lestrate
 
 **Made with**
 

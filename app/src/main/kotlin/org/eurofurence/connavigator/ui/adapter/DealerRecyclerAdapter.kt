@@ -124,6 +124,7 @@ class DealerListItemUI : AnkoComponent<ViewGroup> {
             }.lparams(dip(0), wrapContent, 70F) { gravity = Gravity.CENTER_VERTICAL }
 
             verticalLayout {
+                visibility = View.GONE
                 fontAwesomeView {
                     text = "{fa-exclamation-triangle 24sp}"
                     id = R.id.danger

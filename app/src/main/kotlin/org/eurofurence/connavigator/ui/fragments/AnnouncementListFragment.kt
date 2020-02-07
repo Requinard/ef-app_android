@@ -91,7 +91,7 @@ class AnnouncementListFragment : DisposingFragment(), HasDb, AnkoLogger {
 
     private fun getAnnouncements() = db.announcements.items
             .filterIf(!AppPreferences.showOldAnnouncements) { it.validFromDateTimeUtc.time <= now().millis && it.validUntilDateTimeUtc.time > now().millis }
-            .sortedBy { it.validFromDateTimeUtc }
+            .sortedByDescending { it.validFromDateTimeUtc }
             .toList()
 }
 

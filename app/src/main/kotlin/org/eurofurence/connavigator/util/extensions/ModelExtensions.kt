@@ -27,7 +27,7 @@ fun MapEntryRecord.distance2(otherX: Float, otherY: Float) =
         ((x - otherX) power 2F) + ((y - otherY) power 2F)
 
 
-val ImageRecord.url: String get() = "${apiService.apiPath}/Api/Images/$id/Content/with-hash:${Base64.encodeToString(contentHashSha1.toByteArray(), Base64.NO_WRAP)}"
+val ImageRecord.url: String get() = "${apiService.apiPath}/Api/Images/$id/Content"
 
 fun PrivateMessageRecord.markAsRead() {
     if (AuthPreferences.isLoggedIn) {

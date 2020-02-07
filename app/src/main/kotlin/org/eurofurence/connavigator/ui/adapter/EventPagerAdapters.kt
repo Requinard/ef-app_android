@@ -85,7 +85,13 @@ class FavoriteEventPagerAdapter(val db: Db, fragmentManager: FragmentManager) : 
     override fun getItem(position: Int) = EventRecyclerFragment().withArguments(
             FilterIsFavorited() then FilterOnDay(days[position].id) then OrderTime())
 
-    override fun getPageTitle(position: Int): String = days[position].name
+    override fun getPageTitle(position: Int): String {
+        return if (AppPreferences.shortenDates) {
+            DateTime(days[position].date).dayOfWeek().asShortText
+        } else {
+            DateTime(days[position].date).toString(DateTimeFormat.forPattern("MMM d"))
+        }
+    }
 
     override fun getCount() = days.size
 
